@@ -302,6 +302,27 @@
         const BATCH_SIZE = 25;
         let timeUpdateInterval = null;
 
+        /* --- IMAGE HELPER --- */
+        function getProxiedImageUrl(url, name) {
+            if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
+
+            // Initial simple cleanup
+            let cleanUrl = String(url).trim();
+
+            // Handle Google Drive Links
+            // Matches: drive.google.com/file/d/ID/view or drive.google.com/open?id=ID
+            const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z]+)/);
+
+            if (driveMatch && driveMatch[1]) {
+                // Return direct view link
+                return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
+                // Alternative: https://drive.google.com/uc?export=view&id=${driveMatch[1]}
+                // 'thumbnail' endpoint is often faster and less prone to strict quota limits for small images
+            }
+
+            return cleanUrl;
+        }
+
         /* --- DATA FETCHING & RENDERING --- */
         async function loadLeads() {
             document.getElementById('loader').classList.remove('hidden');
@@ -321,14 +342,9 @@
                     lastLeadCount = rawLeads.length;
                 }
 
-                // Sort by timestamp descending (newest first)
-                rawLeads.sort((a, b) => {
-                    // Try to parse timestamps. Only valid dates are sorted.
-                    // If timestamp missing, treat as oldest (0)
-                    const timeA = a.Timestamp ? new Date(a.Timestamp).getTime() : 0;
-                    const timeB = b.Timestamp ? new Date(b.Timestamp).getTime() : 0;
-                    return timeB - timeA;
-                });
+                // Sort: Reverse the array to show newest (bottom of sheet) first
+                // This is more robust than parsing potentially malformed dates
+                rawLeads.reverse();
 
                 allLeads = [...rawLeads]; // Keep a reference to sorted leads
 
@@ -366,8 +382,25 @@
                 // Ensure timestamp is valid for calculation
                 let timestamp = '';
                 try {
-                    if (lead.Timestamp) {
-                        const d = new Date(lead.Timestamp);
+                    const tsStr = String(lead.Timestamp || '').trim();
+                    if (tsStr) {
+                        // Regex for DD/MM/YYYY HH:MM (supports / or - separator, and optional time)
+                        // Group 1: DD, 2: MM, 3: YYYY, 4: HH, 5: mm
+                        const match = tsStr.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})(?:\s+(\d{1,2}):(\d{1,2}))?/);
+
+                        let d;
+                        if (match) {
+                            const day = parseInt(match[1], 10);
+                            const month = parseInt(match[2], 10) - 1; // 0-indexed
+                            const year = parseInt(match[3], 10);
+                            const hour = match[4] ? parseInt(match[4], 10) : 0;
+                            const minute = match[5] ? parseInt(match[5], 10) : 0;
+                            d = new Date(year, month, day, hour, minute);
+                        } else {
+                            // Fallback to standard parser
+                            d = new Date(tsStr);
+                        }
+
                         if (!isNaN(d.getTime())) {
                             timestamp = d.toISOString();
                         }
@@ -378,7 +411,7 @@
                 <div onclick="openModal(${globalIndex})" class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-slate-100 group">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="relative">
-                            <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?background=random&name=' + lead.Name}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50">
+                            <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" loading="lazy" class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50">
                             <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${getStatusColor(lead.Status)} flex items-center justify-center">
                                 <i class="fa-solid fa-check text-white text-[6px]"></i>
                             </span>
@@ -429,6 +462,9 @@
             const date = new Date(dateString);
             const now = new Date();
             const seconds = Math.floor((now - date) / 1000);
+
+            // Future dates (slight clock skew or manually set future date)
+            if (seconds < 0) return 'Just now';
 
             if (seconds < 60) return 'Just now';
             const minutes = Math.floor(seconds / 60);
@@ -500,7 +536,7 @@
             document.getElementById('modalContent').innerHTML = `
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-4">
-                        <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?name=' + lead.Name}" class="w-16 h-16 rounded-2xl object-cover shadow-md">
+                        <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" class="w-16 h-16 rounded-2xl object-cover shadow-md">
                         <div>
                             <h2 class="text-2xl font-black text-slate-800">${lead.Name}</h2>
                             <p class="text-blue-600 font-bold text-xs uppercase">${lead.Profession}</p>
