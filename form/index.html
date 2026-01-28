@@ -115,20 +115,16 @@
 
             <div id="deleteZone" class="hidden text-center"><button type="button" onclick="handleDelete()" class="text-red-400 text-[10px] font-black uppercase">Delete Entry</button></div>
         </form>
-
-        <div id="waArea" class="hidden mt-6 animate-bounce">
-            <a id="waLink" target="_blank" class="w-full flex items-center justify-center gap-2 p-4 bg-emerald-500 text-white font-black rounded-2xl shadow-lg">
-                <i class="fa-brands fa-whatsapp text-2xl"></i> SEND WHATSAPP
-            </a>
-        </div>
     </div>
 
-    <a href="https://vipsaleads.jhansiproperty.com" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
+   <a href="https://vipsaleads.jhansiproperty.com" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
 
     <script>
-         const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+                 const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+       const REDIRECT_URL = 'https://vipsaleads.jhansiproperty.com'; // Replace with your actual URL
+
 
         
         let allLeads = [];
@@ -156,11 +152,21 @@
             document.getElementById('UserContact').value = '9876543210';
         }
 
-        // 1. 10-Digit Auto Search
+        // 1. 10-Digit Auto Search - Updated to handle 91 prefix in backend
         function autoSearch(val) {
             if (val.length === 10) {
                 document.getElementById('statusMsg').innerText = "Checking...";
-                const match = allLeads.find(r => String(r[2]) === val);
+                // Search for number with 91 prefix in backend
+                const match = allLeads.find(r => {
+                    const backendNumber = String(r[2] || '');
+                    // Check if backend has 91 prefix
+                    if (backendNumber.startsWith('91')) {
+                        return backendNumber === '91' + val;
+                    }
+                    // Fallback to direct comparison if no prefix
+                    return backendNumber === val;
+                });
+                
                 if (match) {
                     const idx = allLeads.indexOf(match) + 2;
                     fillForm(match, idx);
@@ -176,6 +182,12 @@
         function fillForm(data, idx) {
             document.getElementById('rowIndex').value = idx;
             document.getElementById('Name').value = data[1] || '';
+            // Extract 10-digit number from backend (remove 91 prefix if present)
+            let contactNumber = String(data[2] || '');
+            if (contactNumber.startsWith('91') && contactNumber.length === 12) {
+                contactNumber = contactNumber.substring(2);
+            }
+            document.getElementById('Contact').value = contactNumber;
             document.getElementById('City').value = data[3] || 'Jhansi';
             document.getElementById('Profession').value = data[4] || 'Business';
             document.getElementById('Email').value = data[5] || '';
@@ -218,6 +230,11 @@
             const formData = new FormData(e.target);
             const obj = Object.fromEntries(formData);
             
+            // Add 91 prefix to contact number if it's 10 digits
+            if (obj.Contact && obj.Contact.length === 10) {
+                obj.Contact = '91' + obj.Contact;
+            }
+            
             obj.Timestamp = formatDate(new Date());
             obj.FollowUpDateTime = formatDate(obj.FollowUpDateTime);
             obj.Project = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(", ");
@@ -225,10 +242,11 @@
 
             fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(obj) }).then(r => r.text()).then(msg => {
                 alert(msg);
-                const waMsg = encodeURIComponent(`Hi ${obj.Name}, we have received your requirement for ${obj.PropertyType}. Thank you!`);
-                document.getElementById('waLink').href = `https://wa.me/91${obj.Contact}?text=${waMsg}`;
-                document.getElementById('waArea').classList.remove('hidden');
                 btn.innerText = "SAVE RECORD";
+                // Redirect to manual URL after successful save
+                setTimeout(() => {
+                    window.location.href = REDIRECT_URL;
+                }, 1500);
             });
         };
 
@@ -244,7 +262,3 @@
     </script>
 </body>
 </html>
-
-       
-
-
