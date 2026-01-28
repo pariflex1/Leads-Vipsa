@@ -221,11 +221,86 @@
             color: white;
         }
 
-        /* Input Area */
+        /* Initial Centered View */
+        .chat-container.initial-state {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container.initial-state .messages-container,
+        .chat-container.initial-state .home-btn {
+            display: none;
+        }
+
+        .chat-container.initial-state .input-container {
+            border-top: none;
+            width: 100%;
+            max-width: 800px;
+            background: transparent;
+            padding: 0 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .chat-container.initial-state .input-wrapper {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 8px 16px;
+            /* Similar to Gemini bar */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.initial-state .message-input {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .chat-container.initial-state .send-btn {
+            width: 40px;
+            height: 40px;
+            box-shadow: none;
+        }
+
+        /* Welcome Text in Initial State */
+        .initial-welcome {
+            text-align: center;
+            margin-bottom: 40px;
+            display: none;
+            /* Hidden by default, shown via JS/CSS class */
+        }
+
+        .chat-container.initial-state .initial-welcome {
+            display: block;
+        }
+
+        .initial-welcome h1 {
+            font-size: 42px;
+            font-weight: 500;
+            background: linear-gradient(90deg, #4285F4, #9B72CB, #D96570);
+            /* Gemini-ish gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .initial-welcome p {
+            color: #5f6368;
+            font-size: 24px;
+            font-weight: 400;
+        }
+
+        /* Input Area Standard (Bottom) */
         .input-container {
             padding: 20px 30px;
             background: #ffffff;
             border-top: 1px solid var(--border-color);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .input-wrapper {
@@ -451,41 +526,19 @@
 </head>
 
 <body>
-    <div class="chat-container">
-        <!-- Messages Area -->
-        <div class="messages-container" id="messagesContainer">
-            <div class="welcome-message">
-                <h2>👋 नमस्ते! Welcome to Your Personal Assistant!</h2>
-                <p>मैं आपकी लीड्स मैनेज करने, डेटाबेस सर्च करने और जानकारी देने में मदद कर सकता हूं<br>
-                    I can help you manage leads, search the database, and get insights</p>
-            </div>
+    <div class="chat-container initial-state" id="mainContainer">
+        <!-- Initial Welcome Screen -->
+        <div class="initial-welcome" id="initialWelcome">
+            <h1>Hi Pari</h1>
+            <p>Where should we start?</p>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions" id="quickActionsContainer">
-            <div class="quick-actions-title">त्वरित प्रश्न | Quick Questions</div>
-            <div class="quick-actions-grid" id="quickActionsGrid">
-                <button class="quick-action-btn" data-question="आज की लीड्स दिखाओ / Show me today's leads">
-                    📊 आज की लीड्स | Today's Leads
-                </button>
-                <button class="quick-action-btn" data-question="इस महीने कितनी लीड्स हैं? / How many leads this month?">
-                    📈 इस महीने के आंकड़े | This Month's Stats
-                </button>
-                <button class="quick-action-btn" data-question="उच्च बजट वाली लीड्स दिखाओ / Show high budget leads">
-                    💎 हाई बजट लीड्स | High Budget Leads
-                </button>
-                <button class="quick-action-btn"
-                    data-question="आज किन लीड्स का फॉलो-अप है? / Which leads need follow-up today?">
-                    ⏰ आज फॉलो-अप | Follow-up Due Today
-                </button>
-                <button class="quick-action-btn" data-question="शहर के अनुसार लीड्स दिखाओ / Show leads by city">
-                    🏙️ शहर के अनुसार | Leads by Location
-                </button>
-                <button class="quick-action-btn" data-question="लीड सर्च करें / Search for a lead">
-                    🔍 डेटाबेस सर्च | Search Database
-                </button>
-            </div>
+        <!-- Messages Area (Hidden Initially) -->
+        <div class="messages-container" id="messagesContainer">
+            <!-- Messages will appear here -->
         </div>
+
+
 
         <!-- Home Redirect Button -->
         <a href="https://vipsaleads.jhansiproperty.com" class="home-btn" title="Back to Dashboard">
@@ -497,8 +550,8 @@
         <!-- Input Area -->
         <div class="input-container">
             <div class="input-wrapper">
-                <input type="text" class="message-input" id="messageInput"
-                    placeholder="अपना संदेश लिखें... / Type your message..." autocomplete="off">
+                <input type="text" class="message-input" id="messageInput" placeholder="Ask Gemini 3"
+                    autocomplete="off">
                 <button class="send-btn" id="sendBtn">
                     <svg viewBox="0 0 24 24">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
@@ -509,11 +562,11 @@
     </div>
 
     <script>
+        const mainContainer = document.getElementById('mainContainer');
         const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
-        const quickActionsGrid = document.getElementById('quickActionsGrid');
-        const quickActionsContainer = document.getElementById('quickActionsContainer');
+        let isInitialState = true;
 
         // n8n webhook URL
         const WEBHOOK_URL = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
@@ -618,62 +671,26 @@
             }
         }
 
-        // Show follow-up questions
-        function showFollowUpQuestions() {
-            // Clear existing quick actions
-            quickActionsGrid.innerHTML = '';
-
-            // Get random questions from different categories
-            const questions = [];
-            followUpQuestions.forEach(category => {
-                const randomQ = category.questions[Math.floor(Math.random() * category.questions.length)];
-                questions.push(randomQ);
-            });
-
-            // Add a couple more
-            questions.push('नया शुरू करें / Start over');
-            questions.push('सेल्स टीम से बात करें / Talk to sales team');
-
-            questions.forEach(question => {
-                const btn = document.createElement('button');
-                btn.className = 'quick-action-btn';
-                btn.setAttribute('data-question', question);
-                btn.textContent = question;
-                quickActionsGrid.appendChild(btn);
-            });
-
-            // Update title
-            document.querySelector('.quick-actions-title').textContent = 'आप क्या जानना चाहेंगे? | What would you like to know?';
-        }
-
-        // Reset to initial questions
-        function resetQuickActions() {
-            quickActionsGrid.innerHTML = `
-                <button class="quick-action-btn" data-question="आज की लीड्स दिखाओ / Show me today's leads">
-                    📊 आज की लीड्स | Today's Leads
-                </button>
-                <button class="quick-action-btn" data-question="इस महीने कितनी लीड्स हैं? / How many leads this month?">
-                    📈 इस महीने के आंकड़े | This Month's Stats
-                </button>
-                <button class="quick-action-btn" data-question="उच्च बजट वाली लीड्स दिखाओ / Show high budget leads">
-                    💎 हाई बजट लीड्स | High Budget Leads
-                </button>
-                <button class="quick-action-btn" data-question="आज किन लीड्स का फॉलो-अप है? / Which leads need follow-up today?">
-                    ⏰ आज फॉलो-अप | Follow-up Due Today
-                </button>
-                <button class="quick-action-btn" data-question="शहर के अनुसार लीड्स दिखाओ / Show leads by city">
-                    🏙️ शहर के अनुसार | Leads by Location
-                </button>
-                <button class="quick-action-btn" data-question="लीड सर्च करें / Search for a lead">
-                    🔍 डेटाबेस सर्च | Search Database
-                </button>
-            `;
-            document.querySelector('.quick-actions-title').textContent = 'त्वरित प्रश्न | Quick Questions';
+        // Helper function in case we need to reset state later (optional)
+        function resetToInitialState() {
+            mainContainer.classList.add('initial-state');
+            messagesContainer.innerHTML = '';
+            isInitialState = true;
         }
 
         // Send message to n8n
         async function sendMessage(message) {
             if (!message.trim()) return;
+
+            // Handle Initial State Transition
+            if (isInitialState) {
+                mainContainer.classList.remove('initial-state');
+                isInitialState = false;
+                // Add a small delay for smooth animation before ensuring scroll
+                setTimeout(() => {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 100);
+            }
 
             // Add user message
             addMessage(message, 'user');
@@ -744,20 +761,7 @@
             }
         });
 
-        // Quick action buttons
-        quickActionsGrid.addEventListener('click', (e) => {
-            if (e.target.classList.contains('quick-action-btn')) {
-                const question = e.target.getAttribute('data-question');
 
-                if (question.includes('Start over') || question.includes('नया शुरू करें')) {
-                    resetQuickActions();
-                    addMessage('बिल्कुल! चलिए नए सिरे से शुरू करते हैं। आप क्या जानना चाहेंगे?<br>Sure! Let\'s start fresh. What would you like to know?', 'bot', false);
-                } else {
-                    messageInput.value = question;
-                    sendMessage(question);
-                }
-            }
-        });
 
         // Auto-focus input
         messageInput.focus();
