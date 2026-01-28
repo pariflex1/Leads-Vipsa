@@ -80,10 +80,7 @@
                         <i
                             class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
-                    <select id="projectFilter" onchange="handleSearch()"
-                        class="px-4 py-3.5 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-blue-500 bg-white transition-all text-sm font-medium text-slate-700">
-                        <option value="">All Projects</option>
-                    </select>
+
                     <div class="flex items-center gap-3">
                         <a href="https://vipsaleads.jhansiproperty.com/AI"
                             class="w-12 h-12 flex items-center justify-center bg-white text-slate-400 rounded-2xl hover:text-blue-500 transition shadow-lg">
@@ -156,7 +153,6 @@
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
         const USERS_RANGE = 'Users!A2:D';
         const LEADS_RANGE = 'Leads!A2:P';
-        const SEARCH_COLUMNS = ['Name', 'Contact', 'City', 'Profession', 'Status', 'Project', 'PropertyType', 'Budget', 'LocationPrefer'];
         const CHECK_INTERVAL = 30000; // Check every 30 seconds
 
         let rawLeads = [];
@@ -301,6 +297,11 @@
             }, CHECK_INTERVAL);
         }
 
+        let allLeads = [];
+        let displayedCount = 0;
+        const BATCH_SIZE = 25;
+        let timeUpdateInterval = null;
+
         /* --- DATA FETCHING & RENDERING --- */
         async function loadLeads() {
             document.getElementById('loader').classList.remove('hidden');
@@ -309,7 +310,7 @@
                 const res = await fetch(url).then(r => r.json());
                 const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
 
-                rawLeads = res.values.map(row => {
+                rawLeads = (res.values || []).map(row => {
                     let obj = {};
                     headers.forEach((h, i) => obj[h] = row[i] || '');
                     return obj;
@@ -322,30 +323,59 @@
 
                 // Sort by timestamp descending (newest first)
                 rawLeads.sort((a, b) => {
-                    const timeA = new Date(a.Timestamp || 0).getTime();
-                    const timeB = new Date(b.Timestamp || 0).getTime();
+                    // Try to parse timestamps. Only valid dates are sorted.
+                    // If timestamp missing, treat as oldest (0)
+                    const timeA = a.Timestamp ? new Date(a.Timestamp).getTime() : 0;
+                    const timeB = b.Timestamp ? new Date(b.Timestamp).getTime() : 0;
                     return timeB - timeA;
                 });
 
-                populateProjectFilter(rawLeads);
-                renderGrid(rawLeads);
+                allLeads = [...rawLeads]; // Keep a reference to sorted leads
+
+                // Reset and render first batch
+                renderNextBatch(true);
+
+                // Start dynamic time updates
+                startRelativeTimeUpdater();
+
             } catch (err) { console.error(err); }
             document.getElementById('loader').classList.add('hidden');
         }
 
-        function renderGrid(leads) {
+        function renderNextBatch(reset = false) {
             const grid = document.getElementById('leadGrid');
             const empty = document.getElementById('emptyState');
 
-            if (leads.length === 0) {
+            if (reset) {
                 grid.innerHTML = '';
+                displayedCount = 0;
+                window.scrollTo(0, 0);
+            }
+
+            if (allLeads.length === 0) {
                 empty.classList.remove('hidden');
                 return;
             }
-
             empty.classList.add('hidden');
-            grid.innerHTML = leads.map((lead, index) => `
-                <div onclick="openModal(${rawLeads.indexOf(lead)})" class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-slate-100 group">
+
+            const nextBatch = allLeads.slice(displayedCount, displayedCount + BATCH_SIZE);
+            if (nextBatch.length === 0) return;
+
+            const html = nextBatch.map((lead, index) => {
+                const globalIndex = displayedCount + index;
+                // Ensure timestamp is valid for calculation
+                let timestamp = '';
+                try {
+                    if (lead.Timestamp) {
+                        const d = new Date(lead.Timestamp);
+                        if (!isNaN(d.getTime())) {
+                            timestamp = d.toISOString();
+                        }
+                    }
+                } catch (e) { console.warn('Invalid date:', lead.Timestamp); }
+
+                return `
+                <div onclick="openModal(${globalIndex})" class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-slate-100 group">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="relative">
                             <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?background=random&name=' + lead.Name}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50">
@@ -365,7 +395,10 @@
                             <i class="fa-solid fa-phone text-blue-500"></i>
                             <span>${lead.Contact || 'N/A'}</span>
                         </div>
-                        <span class="text-[10px] text-slate-400 font-normal">${formatTimestamp(lead.Timestamp)}</span>
+                        <!-- Dynamic Time Ago -->
+                        <span class="text-[10px] text-slate-400 font-normal time-ago" data-timestamp="${timestamp}">
+                            ${timeAgo(timestamp)}
+                        </span>
                     </div>
                     
                     <!-- City, Status, Project Inline -->
@@ -384,7 +417,39 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+
+            grid.insertAdjacentHTML('beforeend', html);
+            displayedCount += nextBatch.length;
+        }
+
+        /* --- TIME AGO & UPDATER --- */
+        function timeAgo(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}d ago`;
+
+            // Fallback to date
+            return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+        }
+
+        function startRelativeTimeUpdater() {
+            if (timeUpdateInterval) clearInterval(timeUpdateInterval);
+            timeUpdateInterval = setInterval(() => {
+                document.querySelectorAll('.time-ago').forEach(el => {
+                    const ts = el.getAttribute('data-timestamp');
+                    if (ts) el.textContent = timeAgo(ts);
+                });
+            }, 60000); // Update every minute
         }
 
         function getStatusColor(status) {
@@ -394,56 +459,42 @@
             return 'bg-blue-500';
         }
 
+        /* --- INFINITE SCROLL --- */
+        window.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+            if (scrollTop + clientHeight >= scrollHeight - 300) { // Load when near bottom
+                // Throttling could be added here if needed
+                renderNextBatch(false);
+            }
+        });
 
         function formatTimestamp(timestamp) {
+            // Legacy support if specific format needed elsewhere, 
+            // but card uses timeAgo now.
             if (!timestamp) return '';
             const date = new Date(timestamp);
-
-            const day = date.getDate();
-            const month = date.toLocaleDateString('en-US', { month: 'short' });
-            const year = date.getFullYear();
-
-            return `${day}-${month}-${year}`;
-        }
-
-        function populateProjectFilter(leads) {
-            const projects = [...new Set(leads.map(l => l.Project).filter(p => p))];
-            const filter = document.getElementById('projectFilter');
-            const currentValue = filter.value;
-
-            filter.innerHTML = '<option value="">All Projects</option>' +
-                projects.sort().map(p => `<option value="${p}">${p}</option>`).join('');
-
-            // Restore previous selection if it still exists
-            if (currentValue && projects.includes(currentValue)) {
-                filter.value = currentValue;
-            }
+            return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         function handleSearch() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            const selectedProject = document.getElementById('projectFilter').value;
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
 
             const filtered = rawLeads.filter(lead => {
-                // Filter by project
-                if (selectedProject && lead.Project !== selectedProject) {
-                    return false;
-                }
-
-                // Filter by search term
                 if (!term) return true;
 
-                return SEARCH_COLUMNS.some(key => {
-                    const value = lead[key];
-                    return value && String(value).toLowerCase().includes(term);
-                });
+                // Search across ALL values in the lead object
+                return Object.values(lead).some(val =>
+                    val && String(val).toLowerCase().includes(term)
+                );
             });
 
-            renderGrid(filtered);
+            // Update global sorted list based on filter
+            allLeads = filtered;
+            renderNextBatch(true);
         }
 
         function openModal(index) {
-            const lead = rawLeads[index];
+            const lead = allLeads[index]; // Use allLeads to match the rendered grid
             const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
 
             document.getElementById('modalContent').innerHTML = `
