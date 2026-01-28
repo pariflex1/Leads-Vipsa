@@ -99,6 +99,12 @@ Options:
 - `60000` = 1 minute (less frequent)
 - `300000` = 5 minutes (minimal)
 
+### Sorting:
+Leads are sorted by their position in Google Sheets (descending).
+- **Newest rows appear first** (bottom rows in sheet = top of dashboard)
+- Based on row position, not timestamp
+- Last added lead shows at the top
+
 ### Customize Notification Sound:
 Currently uses default system notification sound. To add custom sound:
 1. Add audio file to project

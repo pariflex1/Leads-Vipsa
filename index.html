@@ -271,9 +271,10 @@
                 const res = await fetch(url).then(r => r.json());
                 const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
                 
-                rawLeads = res.values.map(row => {
+                rawLeads = res.values.map((row, index) => {
                     let obj = {};
                     headers.forEach((h, i) => obj[h] = row[i] || '');
+                    obj._rowPosition = index; // Store original row position
                     return obj;
                 });
                 
@@ -282,11 +283,9 @@
                     lastLeadCount = rawLeads.length;
                 }
                 
-                // Sort by timestamp descending (newest first)
+                // Sort by Google Sheet row position descending (newest rows first)
                 rawLeads.sort((a, b) => {
-                    const timeA = new Date(a.Timestamp || 0).getTime();
-                    const timeB = new Date(b.Timestamp || 0).getTime();
-                    return timeB - timeA;
+                    return b._rowPosition - a._rowPosition;
                 });
                 
                 renderGrid(rawLeads);
