@@ -406,6 +406,20 @@
             return `${day}-${month}-${year}`;
         }
 
+        function populateProjectFilter(leads) {
+            const projects = [...new Set(leads.map(l => l.Project).filter(p => p))];
+            const filter = document.getElementById('projectFilter');
+            const currentValue = filter.value;
+
+            filter.innerHTML = '<option value="">All Projects</option>' +
+                projects.sort().map(p => `<option value="${p}">${p}</option>`).join('');
+
+            // Restore previous selection if it still exists
+            if (currentValue && projects.includes(currentValue)) {
+                filter.value = currentValue;
+            }
+        }
+
         function handleSearch() {
             const term = document.getElementById('searchInput').value.toLowerCase();
             const selectedProject = document.getElementById('projectFilter').value;
