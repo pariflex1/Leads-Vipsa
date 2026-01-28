@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,34 +12,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .auth-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        [v-cloak] { display: none; }
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .auth-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 min-h-screen font-sans">
 
     <div id="authScreen" class="fixed inset-0 z-[100] auth-gradient flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-sm shadow-2xl">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div
+                    class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <i class="fa-solid fa-fingerprint text-3xl"></i>
                 </div>
                 <h2 class="text-2xl font-black text-slate-800">Secure Access</h2>
                 <p class="text-slate-400 text-sm">Enter credentials to continue</p>
             </div>
-            
+
             <div class="space-y-4">
-                <input type="text" id="userInp" placeholder="Username" class="w-full p-4 rounded-2xl bg-slate-100 border-none focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="password" id="pinInp" placeholder="4-Digit PIN" maxlength="4" class="w-full p-4 rounded-2xl bg-slate-100 text-center text-2xl tracking-widest border-none focus:ring-2 focus:ring-blue-500 outline-none">
-                <button onclick="loginWithPin()" id="loginBtn" class="w-full py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                <input type="text" id="userInp" placeholder="Username"
+                    class="w-full p-4 rounded-2xl bg-slate-100 border-none focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" id="pinInp" placeholder="4-Digit PIN" maxlength="4"
+                    class="w-full p-4 rounded-2xl bg-slate-100 text-center text-2xl tracking-widest border-none focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="loginWithPin()" id="loginBtn"
+                    class="w-full py-4 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">
                     Verify PIN
                 </button>
-                
+
                 <div id="passkeySection" class="hidden">
-                    <div class="relative py-4 flex items-center"><div class="flex-grow border-t border-slate-200"></div><span class="px-3 text-[10px] text-slate-400 font-bold uppercase">Or</span><div class="flex-grow border-t border-slate-200"></div></div>
-                    <button onclick="loginWithPasskey()" class="w-full py-4 rounded-2xl border-2 border-slate-200 text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition">
+                    <div class="relative py-4 flex items-center">
+                        <div class="flex-grow border-t border-slate-200"></div><span
+                            class="px-3 text-[10px] text-slate-400 font-bold uppercase">Or</span>
+                        <div class="flex-grow border-t border-slate-200"></div>
+                    </div>
+                    <button onclick="loginWithPasskey()"
+                        class="w-full py-4 rounded-2xl border-2 border-slate-200 text-slate-700 font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition">
                         <i class="fa-solid fa-face-smile text-blue-500"></i> Use Passkey
                     </button>
                 </div>
@@ -51,16 +74,23 @@
             <header class="sticky top-0 z-40 pb-6 bg-slate-50/90 backdrop-blur-md">
                 <div class="flex items-center justify-between gap-4 pt-2">
                     <div class="relative flex-1 max-w-md">
-                        <input type="text" id="searchInput" oninput="handleSearch()" 
-                               placeholder="Search by name, city, budget..." 
-                               class="w-full pl-11 pr-4 py-3.5 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-blue-500 bg-white transition-all">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="searchInput" oninput="handleSearch()"
+                            placeholder="Search by name, city, budget..."
+                            class="w-full pl-11 pr-4 py-3.5 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-blue-500 bg-white transition-all">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     </div>
+                    <select id="projectFilter" onchange="handleSearch()"
+                        class="px-4 py-3.5 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-blue-500 bg-white transition-all text-sm font-medium text-slate-700">
+                        <option value="">All Projects</option>
+                    </select>
                     <div class="flex items-center gap-3">
-                        <button onclick="requestNotificationPermission()" id="notifyBtn" class="w-12 h-12 flex items-center justify-center bg-white text-slate-400 rounded-2xl hover:text-blue-500 transition shadow-lg">
-                            <i class="fa-solid fa-bell"></i>
-                        </button>
-                        <button onclick="confirmLogout()" class="w-12 h-12 flex items-center justify-center bg-white text-slate-400 rounded-2xl hover:text-red-500 transition shadow-lg">
+                        <a href="#AI_REDIRECT_URL_PLACEHOLDER"
+                            class="w-12 h-12 flex items-center justify-center bg-white text-slate-400 rounded-2xl hover:text-blue-500 transition shadow-lg">
+                            <i class="fa-solid fa-robot"></i>
+                        </a>
+                        <button onclick="confirmLogout()"
+                            class="w-12 h-12 flex items-center justify-center bg-white text-slate-400 rounded-2xl hover:text-red-500 transition shadow-lg">
                             <i class="fa-solid fa-power-off"></i>
                         </button>
                     </div>
@@ -73,39 +103,47 @@
             </div>
 
             <div id="leadGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-            
+
             <div id="emptyState" class="hidden text-center py-20">
                 <i class="fa-solid fa-box-open text-4xl text-slate-200 mb-4"></i>
                 <p class="text-slate-500">No leads found matching your search.</p>
             </div>
         </div>
 
-        <a href="http://vipsaleads.jhansiproperty.com/form" class="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 active:scale-95 transition-all z-50">
+        <a href="https://vipsaleads.jhansiproperty.com/form"
+            class="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 active:scale-95 transition-all z-50">
             <i class="fa-solid fa-plus"></i>
         </a>
     </div>
 
-    <div id="leadModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeOnBackdrop(event)">
-        <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col" id="modalContainer">
+    <div id="leadModal"
+        class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        onclick="closeOnBackdrop(event)">
+        <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+            id="modalContainer">
             <div class="overflow-y-auto custom-scroll p-8" id="modalContent"></div>
         </div>
     </div>
 
     <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div id="logoutModal"
+        class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white p-8 rounded-[2rem] w-full max-w-sm shadow-2xl">
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div
+                    class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <i class="fa-solid fa-power-off text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-black text-slate-800 mb-2">Confirm Logout</h3>
                 <p class="text-slate-500 text-sm">Are you sure you want to log out?</p>
             </div>
             <div class="flex gap-3">
-                <button onclick="closeLogoutModal()" class="flex-1 py-3 rounded-2xl border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition">
+                <button onclick="closeLogoutModal()"
+                    class="flex-1 py-3 rounded-2xl border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition">
                     Cancel
                 </button>
-                <button onclick="logout()" class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-700 transition">
+                <button onclick="logout()"
+                    class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-700 transition">
                     Logout
                 </button>
             </div>
@@ -150,7 +188,7 @@
         async function loginWithPin() {
             const u = document.getElementById('userInp').value.trim();
             const p = document.getElementById('pinInp').value.trim();
-            if(!u || !p) return alert("Enter Username and PIN");
+            if (!u || !p) return alert("Enter Username and PIN");
 
             const btn = document.getElementById('loginBtn');
             btn.innerText = "Checking...";
@@ -230,32 +268,32 @@
 
         function startLeadChecker() {
             if (checkInterval) clearInterval(checkInterval);
-            
+
             checkInterval = setInterval(async () => {
                 try {
                     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${LEADS_RANGE}?key=${API_KEY}`;
                     const res = await fetch(url).then(r => r.json());
                     const currentCount = (res.values || []).length;
-                    
+
                     if (lastLeadCount > 0 && currentCount > lastLeadCount) {
                         const newLeadsCount = currentCount - lastLeadCount;
                         const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
-                        
+
                         // Get the newest lead
                         const newestRow = res.values[currentCount - 1];
                         let newestLead = {};
                         headers.forEach((h, i) => newestLead[h] = newestRow[i] || '');
-                        
+
                         showNotification(
                             `🎉 ${newLeadsCount} New Lead${newLeadsCount > 1 ? 's' : ''}!`,
                             `${newestLead.Name} from ${newestLead.City} - ${newestLead.Project}`,
                             { leadName: newestLead.Name }
                         );
-                        
+
                         // Reload leads to show the new one
                         loadLeads();
                     }
-                    
+
                     lastLeadCount = currentCount;
                 } catch (err) {
                     console.error('Lead check error:', err);
@@ -270,24 +308,26 @@
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${LEADS_RANGE}?key=${API_KEY}`;
                 const res = await fetch(url).then(r => r.json());
                 const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
-                
-                rawLeads = res.values.map((row, index) => {
+
+                rawLeads = res.values.map(row => {
                     let obj = {};
                     headers.forEach((h, i) => obj[h] = row[i] || '');
-                    obj._rowPosition = index; // Store original row position
                     return obj;
                 });
-                
+
                 // Set initial count
                 if (lastLeadCount === 0) {
                     lastLeadCount = rawLeads.length;
                 }
-                
-                // Sort by Google Sheet row position descending (newest rows first)
+
+                // Sort by timestamp descending (newest first)
                 rawLeads.sort((a, b) => {
-                    return b._rowPosition - a._rowPosition;
+                    const timeA = new Date(a.Timestamp || 0).getTime();
+                    const timeB = new Date(b.Timestamp || 0).getTime();
+                    return timeB - timeA;
                 });
-                
+
+                populateProjectFilter(rawLeads);
                 renderGrid(rawLeads);
             } catch (err) { console.error(err); }
             document.getElementById('loader').classList.add('hidden');
@@ -296,19 +336,19 @@
         function renderGrid(leads) {
             const grid = document.getElementById('leadGrid');
             const empty = document.getElementById('emptyState');
-            
+
             if (leads.length === 0) {
                 grid.innerHTML = '';
                 empty.classList.remove('hidden');
                 return;
             }
-            
+
             empty.classList.add('hidden');
             grid.innerHTML = leads.map((lead, index) => `
                 <div onclick="openModal(${rawLeads.indexOf(lead)})" class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-slate-100 group">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="relative">
-                            <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?background=random&name='+lead.Name}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50">
+                            <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?background=random&name=' + lead.Name}" class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-50">
                             <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ${getStatusColor(lead.Status)} flex items-center justify-center">
                                 <i class="fa-solid fa-check text-white text-[6px]"></i>
                             </span>
@@ -319,10 +359,13 @@
                         </div>
                     </div>
                     
-                    <!-- Contact Number -->
-                    <div class="mb-3 bg-slate-50 text-slate-600 px-3 py-2 rounded-xl flex items-center gap-2 text-xs font-bold">
-                        <i class="fa-solid fa-phone text-blue-500"></i>
-                        <span>${lead.Contact || 'N/A'}</span>
+                    <!-- Contact Number & Timestamp -->
+                    <div class="mb-3 bg-slate-50 text-slate-600 px-3 py-2 rounded-xl flex items-center justify-between gap-2 text-xs font-bold">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-blue-500"></i>
+                            <span>${lead.Contact || 'N/A'}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-normal">${formatTimestamp(lead.Timestamp)}</span>
                     </div>
                     
                     <!-- City, Status, Project Inline -->
@@ -351,25 +394,48 @@
             return 'bg-blue-500';
         }
 
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+
+            const day = date.getDate();
+            const month = date.toLocaleDateString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+
+            return `${day}-${month}-${year}`;
+        }
+
         function handleSearch() {
             const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = rawLeads.filter(lead => 
-                SEARCH_COLUMNS.some(key => {
+            const selectedProject = document.getElementById('projectFilter').value;
+
+            const filtered = rawLeads.filter(lead => {
+                // Filter by project
+                if (selectedProject && lead.Project !== selectedProject) {
+                    return false;
+                }
+
+                // Filter by search term
+                if (!term) return true;
+
+                return SEARCH_COLUMNS.some(key => {
                     const value = lead[key];
                     return value && String(value).toLowerCase().includes(term);
-                })
-            );
+                });
+            });
+
             renderGrid(filtered);
         }
 
         function openModal(index) {
             const lead = rawLeads[index];
             const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
-            
+
             document.getElementById('modalContent').innerHTML = `
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-4">
-                        <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?name='+lead.Name}" class="w-16 h-16 rounded-2xl object-cover shadow-md">
+                        <img src="${lead.ClientImageUrl || 'https://ui-avatars.com/api/?name=' + lead.Name}" class="w-16 h-16 rounded-2xl object-cover shadow-md">
                         <div>
                             <h2 class="text-2xl font-black text-slate-800">${lead.Name}</h2>
                             <p class="text-blue-600 font-bold text-xs uppercase">${lead.Profession}</p>
@@ -409,21 +475,22 @@
 
         function closeModal() { document.getElementById('leadModal').classList.add('hidden'); }
         function closeOnBackdrop(e) { if (e.target.id === 'leadModal') closeModal(); }
-        
+
         function confirmLogout() {
             document.getElementById('logoutModal').classList.remove('hidden');
         }
-        
+
         function closeLogoutModal() {
             document.getElementById('logoutModal').classList.add('hidden');
         }
-        
-        function logout() { 
+
+        function logout() {
             if (checkInterval) clearInterval(checkInterval);
             localStorage.removeItem('isAuth');
             localStorage.removeItem('displayName');
-            location.reload(); 
+            location.reload();
         }
     </script>
 </body>
+
 </html>
