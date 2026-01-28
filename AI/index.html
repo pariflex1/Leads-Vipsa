@@ -291,6 +291,44 @@
             transform: scale(1);
         }
 
+        /* Home/Redirect Button */
+        .home-btn {
+            position: absolute;
+            bottom: 90px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: #667eea;
+        }
+
+        .home-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .home-btn:hover svg {
+            transform: scale(1.1);
+            fill: #764ba2;
+        }
+
         /* Typing Indicator */
         .typing-indicator {
             display: none;
@@ -391,6 +429,13 @@
             .input-container {
                 padding: 16px 20px;
             }
+
+            .home-btn {
+                bottom: 85px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
         }
 
         .error-message {
@@ -441,6 +486,13 @@
                 </button>
             </div>
         </div>
+
+        <!-- Home Redirect Button -->
+        <a href="https://vipsaleads.jhansiproperty.com" class="home-btn" title="Back to Dashboard">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+        </a>
 
         <!-- Input Area -->
         <div class="input-container">
