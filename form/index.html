@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Entry System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>.custom-scroll::-webkit-scrollbar { width: 4px; } .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }</style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 pb-24">
+
+    <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] shadow-2xl p-8 border border-slate-100">
+        <h2 class="text-2xl font-black text-slate-800 mb-6 tracking-tight">LEAD FORM <span class="text-blue-600">.</span></h2>
+
+        <form id="leadForm" class="space-y-4">
+            <input type="hidden" id="rowIndex" name="rowIndex">
+            <input type="hidden" id="existingImg" name="existingImg">
+            <input type="hidden" id="UserName" name="UserName">
+            <input type="hidden" id="UserContact" name="UserContact">
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Contact *</label>
+                <input type="tel" id="Contact" name="Contact" maxlength="10" required oninput="autoSearch(this.value)"
+                    class="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 text-lg font-bold">
+                <p id="statusMsg" class="text-[10px] mt-1 font-bold italic"></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Name *</label>
+                    <input type="text" id="Name" name="Name" required class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">City *</label>
+                    <input type="text" id="City" name="City" value="Jhansi" required class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Profession *</label>
+                    <select id="Profession" name="Profession" required onchange="toggleOther(this, 'profOther')" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                        <option value="Business">Business</option>
+                        <option value="Govt. Employee">Govt. Employee</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Engineer">Engineer</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" id="profOther" placeholder="Specify Profession" class="hidden mt-2 w-full p-3 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Status</label>
+                    <select id="Status" name="Status" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                        <option value="New">New</option>
+                        <option value="Hot">Hot</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Project (Select Multiple)</label>
+                <select id="Project" name="Project" multiple class="w-full p-4 bg-slate-50 rounded-2xl border-none h-24 custom-scroll font-bold text-slate-600"></select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Property Type</label>
+                    <select id="PropertyType" name="PropertyType" onchange="toggleOther(this, 'propOther')" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                        <option value="Plots">Plots</option>
+                        <option value="Villa">Villa</option>
+                        <option value="House">House</option>
+                        <option value="Land">Land</option>
+                        <option value="Flat">Flat</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="text" id="propOther" placeholder="Specify Type" class="hidden mt-2 w-full p-3 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Budget</label>
+                    <input type="text" id="Budget" name="Budget" placeholder="e.g. 50L - 1Cr" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Follow-up Date & Time</label>
+                    <input type="datetime-local" id="FollowUpDateTime" name="FollowUpDateTime" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Email</label>
+                    <input type="email" id="Email" name="Email" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Location Preference</label>
+                <input type="text" id="LocationPrefer" name="LocationPrefer" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Notes</label>
+                <textarea id="Note" name="Note" rows="2" class="w-full p-4 bg-slate-50 rounded-2xl border-none"></textarea>
+            </div>
+
+            <div class="p-4 border-2 border-dashed border-slate-100 rounded-2xl text-center">
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Client Photo (< 90KB)</label>
+                <input type="file" id="photoInput" accept="image/*" class="text-xs">
+                <canvas id="compressor" class="hidden"></canvas>
+            </div>
+
+            <button type="submit" id="saveBtn" class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl hover:bg-blue-700 transition-all">SAVE RECORD</button>
+
+            <div id="deleteZone" class="hidden text-center"><button type="button" onclick="handleDelete()" class="text-red-400 text-[10px] font-black uppercase">Delete Entry</button></div>
+        </form>
+
+        <div id="waArea" class="hidden mt-6 animate-bounce">
+            <a id="waLink" target="_blank" class="w-full flex items-center justify-center gap-2 p-4 bg-emerald-500 text-white font-black rounded-2xl shadow-lg">
+                <i class="fa-brands fa-whatsapp text-2xl"></i> SEND WHATSAPP
+            </a>
+        </div>
+    </div>
+
+    <a href="YOUR_MANUAL_URL" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
+
+    <script>
+         const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+        const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+
+        
+        let allLeads = [];
+        let photoData = null;
+
+        window.onload = async () => {
+            // Load Initial Data via API (FAST)
+            const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`).then(r => r.json());
+            allLeads = res.values || [];
+            
+            const projRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:A?key=${API_KEY}`).then(r => r.json());
+            const projSel = document.getElementById('Project');
+            (projRes.values || []).forEach(p => projSel.add(new Option(p[0], p[0])));
+
+            setDefaults();
+        };
+
+        function setDefaults() {
+            // 7. 3 Days Later @ 10 AM
+            const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
+            document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
+            
+            // 14. Hidden User Info (Fetched from local session)
+            document.getElementById('UserName').value = localStorage.getItem('displayName') || 'Pari';
+            document.getElementById('UserContact').value = '9876543210';
+        }
+
+        // 1. 10-Digit Auto Search
+        function autoSearch(val) {
+            if (val.length === 10) {
+                document.getElementById('statusMsg').innerText = "Checking...";
+                const match = allLeads.find(r => String(r[2]) === val);
+                if (match) {
+                    const idx = allLeads.indexOf(match) + 2;
+                    fillForm(match, idx);
+                    document.getElementById('statusMsg').innerText = "Record found! Updating mode.";
+                    document.getElementById('statusMsg').className = "text-[10px] mt-1 font-bold italic text-blue-500";
+                } else {
+                    document.getElementById('statusMsg').innerText = "New number detected.";
+                    document.getElementById('statusMsg').className = "text-[10px] mt-1 font-bold italic text-emerald-500";
+                }
+            }
+        }
+
+        function fillForm(data, idx) {
+            document.getElementById('rowIndex').value = idx;
+            document.getElementById('Name').value = data[1] || '';
+            document.getElementById('City').value = data[3] || 'Jhansi';
+            document.getElementById('Profession').value = data[4] || 'Business';
+            document.getElementById('Email').value = data[5] || '';
+            document.getElementById('Status').value = data[6] || 'New';
+            document.getElementById('Note').value = data[7] || '';
+            document.getElementById('PropertyType').value = data[9] || 'Plots';
+            document.getElementById('Budget').value = data[10] || '';
+            document.getElementById('LocationPrefer').value = data[11] || '';
+            document.getElementById('existingImg').value = data[15] || '';
+            document.getElementById('deleteZone').classList.remove('hidden');
+        }
+
+        // 11. Image Compression (<90KB)
+        document.getElementById('photoInput').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.getElementById('compressor');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 400; canvas.height = 400; // Force Resize
+                    ctx.drawImage(img, 0, 0, 400, 400);
+                    photoData = canvas.toDataURL('image/jpeg', 0.6); // High compression
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        function formatDate(dt) {
+            if(!dt) return "";
+            const d = new Date(dt);
+            return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        }
+
+        document.getElementById('leadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn'); btn.innerText = "UPLOADING...";
+            
+            const formData = new FormData(e.target);
+            const obj = Object.fromEntries(formData);
+            
+            obj.Timestamp = formatDate(new Date());
+            obj.FollowUpDateTime = formatDate(obj.FollowUpDateTime);
+            obj.Project = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(", ");
+            obj.photo = photoData;
+
+            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(obj) }).then(r => r.text()).then(msg => {
+                alert(msg);
+                const waMsg = encodeURIComponent(`Hi ${obj.Name}, we have received your requirement for ${obj.PropertyType}. Thank you!`);
+                document.getElementById('waLink').href = `https://wa.me/91${obj.Contact}?text=${waMsg}`;
+                document.getElementById('waArea').classList.remove('hidden');
+                btn.innerText = "SAVE RECORD";
+            });
+        };
+
+        async function handleDelete() {
+            const pin = prompt("Enter PIN to delete:");
+            const idx = document.getElementById('rowIndex').value;
+            if (pin && idx) {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action:"delete", rowIndex:idx, pin:pin}) }).then(r => r.text());
+                alert(res); location.reload();
+            }
+        }
+        function toggleOther(sel, target) { document.getElementById(target).classList.toggle('hidden', sel.value !== 'Other'); }
+    </script>
+</body>
+</html>
+       
