@@ -117,15 +117,14 @@
         </form>
     </div>
 
-   <a href="https://vipsaleads.jhansiproperty.com" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
+    <a href="YOUR_MANUAL_URL" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
 
     <script>
-                 const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+        const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI6JXfuy30w2uvGR0m8xYYiof3BnXrba3pXDQgy_GiOu1fdop0GKwregUdFkvwMl_Q/exec';
-       const REDIRECT_URL = 'https://vipsaleads.jhansiproperty.com'; // Replace with your actual URL
-
-
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+        const REDIRECT_URL = 'YOUR_MANUAL_URL'; // Replace with your actual URL
+        
         // Check if redirect URL is configured
         const shouldRedirect = REDIRECT_URL && REDIRECT_URL !== 'YOUR_MANUAL_URL';
 
@@ -321,8 +320,18 @@
                     const originalProjectArray = originalData.Project ? originalData.Project.split(',').map(p => p.trim()).filter(p => p) : [];
                     
                     // Compare arrays to check if Project was actually changed
-                    const projectChanged = currentProjectArray.length !== originalProjectArray.length || 
-                                          !currentProjectArray.every(p => originalProjectArray.includes(p));
+                    // Sort both arrays for accurate comparison
+                    const currentSorted = [...currentProjectArray].sort();
+                    const originalSorted = [...originalProjectArray].sort();
+                    
+                    const projectChanged = currentSorted.length !== originalSorted.length || 
+                                          !currentSorted.every((p, i) => p === originalSorted[i]);
+                    
+                    console.log('Project comparison:', {
+                        original: originalProjectArray,
+                        current: currentProjectArray,
+                        changed: projectChanged
+                    });
                     
                     dataToSend.Project = projectChanged ? currentProject : originalData.Project;
                     
@@ -400,4 +409,3 @@
     </script>
 </body>
 </html>
-
