@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lead-pro-v3-search';
+const CACHE_NAME = 'lead-pro-v7-img-fix';
 const urlsToCache = [
   '/',
   '/index.html',

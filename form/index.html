@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lead Entry System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>.custom-scroll::-webkit-scrollbar { width: 4px; } .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }</style>
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
 </head>
+
 <body class="bg-slate-50 min-h-screen p-4 pb-24">
 
     <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] shadow-2xl p-8 border border-slate-100">
-        <h2 class="text-2xl font-black text-slate-800 mb-6 tracking-tight">LEAD FORM <span class="text-blue-600">.</span></h2>
+        <h2 class="text-2xl font-black text-slate-800 mb-6 tracking-tight">LEAD FORM <span
+                class="text-blue-600">.</span></h2>
 
         <form id="leadForm" class="space-y-4">
             <input type="hidden" id="rowIndex" name="rowIndex">
@@ -29,31 +41,35 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Name *</label>
-                    <input type="text" id="Name" name="Name" required class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <input type="text" id="Name" name="Name" required
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">City *</label>
-                    <input type="text" id="City" name="City" value="Jhansi" required class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <input type="text" id="City" name="City" value="Jhansi" required
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Profession *</label>
-                    <select id="Profession" name="Profession" required onchange="toggleOther(this, 'profOther')" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <select id="Profession" name="Profession" required onchange="toggleOther(this, 'profOther')"
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                         <option value="Business">Business</option>
                         <option value="Govt. Employee">Govt. Employee</option>
                         <option value="Doctor">Doctor</option>
                         <option value="Engineer">Engineer</option>
                         <option value="Other">Other</option>
                     </select>
-                    <input type="text" id="profOther" placeholder="Specify Profession" class="hidden mt-2 w-full p-3 border rounded-xl">
+                    <input type="text" id="profOther" placeholder="Specify Profession"
+                        class="hidden mt-2 w-full p-3 border rounded-xl">
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Status</label>
                     <select id="Status" name="Status" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                         <option value="New">New</option>
-                        <option value="Site-visit">Site-visit</option>
+                        <option value="Hot">Hot</option>
                         <option value="Follow-up">Follow-up</option>
                         <option value="Closed">Closed</option>
                     </select>
@@ -61,14 +77,17 @@
             </div>
 
             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Project (Select Multiple)</label>
-                <select id="Project" name="Project" multiple class="w-full p-4 bg-slate-50 rounded-2xl border-none h-24 custom-scroll font-bold text-slate-600"></select>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Project (Select
+                    Multiple)</label>
+                <select id="Project" name="Project" multiple
+                    class="w-full p-4 bg-slate-50 rounded-2xl border-none h-24 custom-scroll font-bold text-slate-600"></select>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Property Type</label>
-                    <select id="PropertyType" name="PropertyType" onchange="toggleOther(this, 'propOther')" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <select id="PropertyType" name="PropertyType" onchange="toggleOther(this, 'propOther')"
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                         <option value="Plots">Plots</option>
                         <option value="Villa">Villa</option>
                         <option value="House">House</option>
@@ -76,18 +95,22 @@
                         <option value="Flat">Flat</option>
                         <option value="Other">Other</option>
                     </select>
-                    <input type="text" id="propOther" placeholder="Specify Type" class="hidden mt-2 w-full p-3 border rounded-xl">
+                    <input type="text" id="propOther" placeholder="Specify Type"
+                        class="hidden mt-2 w-full p-3 border rounded-xl">
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Budget</label>
-                    <input type="text" id="Budget" name="Budget" placeholder="e.g. 50L - 1Cr" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <input type="text" id="Budget" name="Budget" placeholder="e.g. 50L - 1Cr"
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Follow-up Date & Time</label>
-                    <input type="datetime-local" id="FollowUpDateTime" name="FollowUpDateTime" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Follow-up Date &
+                        Time</label>
+                    <input type="datetime-local" id="FollowUpDateTime" name="FollowUpDateTime"
+                        class="w-full p-4 bg-slate-50 rounded-2xl border-none">
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Email</label>
@@ -97,42 +120,49 @@
 
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Location Preference</label>
-                <input type="text" id="LocationPrefer" name="LocationPrefer" class="w-full p-4 bg-slate-50 rounded-2xl border-none">
+                <input type="text" id="LocationPrefer" name="LocationPrefer"
+                    class="w-full p-4 bg-slate-50 rounded-2xl border-none">
             </div>
 
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Notes</label>
-                <textarea id="Note" name="Note" rows="2" class="w-full p-4 bg-slate-50 rounded-2xl border-none"></textarea>
+                <textarea id="Note" name="Note" rows="2"
+                    class="w-full p-4 bg-slate-50 rounded-2xl border-none"></textarea>
             </div>
 
             <div class="p-4 border-2 border-dashed border-slate-100 rounded-2xl text-center">
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Client Photo (< 90KB)</label>
-                <input type="file" id="photoInput" accept="image/*" class="text-xs">
-                <canvas id="compressor" class="hidden"></canvas>
+                        <input type="file" id="photoInput" accept="image/*" class="text-xs">
+                        <canvas id="compressor" class="hidden"></canvas>
             </div>
 
-            <button type="submit" id="saveBtn" class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl hover:bg-blue-700 transition-all">SAVE RECORD</button>
+            <button type="submit" id="saveBtn"
+                class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl hover:bg-blue-700 transition-all">SAVE
+                RECORD</button>
 
-            <div id="deleteZone" class="hidden text-center"><button type="button" onclick="handleDelete()" class="text-red-400 text-[10px] font-black uppercase">Delete Entry</button></div>
+            <div id="deleteZone" class="hidden text-center"><button type="button" onclick="handleDelete()"
+                    class="text-red-400 text-[10px] font-black uppercase">Delete Entry</button></div>
         </form>
     </div>
 
-    <a href="YOUR_MANUAL_URL" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i class="fa-solid fa-arrow-down"></i></a>
+    <a href="YOUR_MANUAL_URL"
+        class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center text-xl shadow-2xl hover:scale-110 transition-transform"><i
+            class="fa-solid fa-arrow-down"></i></a>
 
     <script>
         const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
         const REDIRECT_URL = 'YOUR_MANUAL_URL'; // Replace with your actual URL
-        
+
         // Check if redirect URL is configured
         const shouldRedirect = REDIRECT_URL && REDIRECT_URL !== 'YOUR_MANUAL_URL';
 
-        
+
         let allLeads = [];
         let photoData = null;
         let originalData = {}; // Store original values for comparison
-        
+
         // Initialize empty originalData to prevent errors on new records
         function resetOriginalData() {
             originalData = {
@@ -155,11 +185,11 @@
         window.onload = async () => {
             // Initialize originalData
             resetOriginalData();
-            
+
             // Load Initial Data via API (FAST)
             const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`).then(r => r.json());
             allLeads = res.values || [];
-            
+
             const projRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:A?key=${API_KEY}`).then(r => r.json());
             const projSel = document.getElementById('Project');
             (projRes.values || []).forEach(p => projSel.add(new Option(p[0], p[0])));
@@ -171,7 +201,7 @@
             // 7. 3 Days Later @ 10 AM
             const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
             document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
-            
+
             // 14. Hidden User Info (Fetched from local session)
             document.getElementById('UserName').value = localStorage.getItem('displayName') || 'Pari';
             document.getElementById('UserContact').value = '9876543210';
@@ -191,7 +221,7 @@
                     // Fallback to direct comparison if no prefix
                     return backendNumber === val;
                 });
-                
+
                 if (match) {
                     const idx = allLeads.indexOf(match) + 2;
                     fillForm(match, idx);
@@ -210,13 +240,13 @@
 
         function fillForm(data, idx) {
             document.getElementById('rowIndex').value = idx;
-            
+
             // Extract 10-digit number from backend (remove 91 prefix if present)
             let contactNumber = String(data[2] || '');
             if (contactNumber.startsWith('91') && contactNumber.length === 12) {
                 contactNumber = contactNumber.substring(2);
             }
-            
+
             // Store original values for comparison
             originalData = {
                 Contact: contactNumber,
@@ -233,7 +263,7 @@
                 FollowUpDateTime: data[12] || '',
                 existingImg: data[15] || ''
             };
-            
+
             // Fill form fields
             document.getElementById('Name').value = originalData.Name;
             document.getElementById('Contact').value = originalData.Contact;
@@ -246,14 +276,14 @@
             document.getElementById('Budget').value = originalData.Budget;
             document.getElementById('LocationPrefer').value = originalData.LocationPrefer;
             document.getElementById('existingImg').value = originalData.existingImg;
-            
+
             // Restore multi-select Project field
             const projectSelect = document.getElementById('Project');
             const savedProjects = originalData.Project.split(',').map(p => p.trim()).filter(p => p);
             for (let option of projectSelect.options) {
                 option.selected = savedProjects.includes(option.value);
             }
-            
+
             document.getElementById('deleteZone').classList.remove('hidden');
         }
 
@@ -275,98 +305,98 @@
         };
 
         function formatDate(dt) {
-            if(!dt) return "";
+            if (!dt) return "";
             const d = new Date(dt);
-            return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+            return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
         }
 
         document.getElementById('leadForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('saveBtn'); 
+            const btn = document.getElementById('saveBtn');
             btn.innerText = "UPLOADING...";
             btn.disabled = true;
-            
+
             try {
                 const formData = new FormData(e.target);
                 const obj = Object.fromEntries(formData);
-                
+
                 const rowIndex = obj.rowIndex;
                 const isUpdate = rowIndex && rowIndex !== '';
-                
+
                 console.log('Form submission - isUpdate:', isUpdate, 'rowIndex:', rowIndex);
-                
+
                 // Prepare data object
                 const dataToSend = {};
-                
+
                 if (isUpdate) {
                     // Updating existing record - use original values for unchanged fields
                     dataToSend.rowIndex = parseInt(rowIndex); // Ensure it's a number
-                    
+
                     // For each field, use current value if changed, otherwise use original
                     const currentContact = obj.Contact;
-                    dataToSend.Contact = (currentContact !== originalData.Contact) 
+                    dataToSend.Contact = (currentContact !== originalData.Contact)
                         ? (currentContact.length === 10 ? '91' + currentContact : currentContact)
                         : (originalData.Contact.length === 10 ? '91' + originalData.Contact : originalData.Contact);
-                    
+
                     dataToSend.Name = obj.Name || originalData.Name;
                     dataToSend.City = obj.City || originalData.City;
                     dataToSend.Profession = obj.Profession || originalData.Profession;
                     dataToSend.Email = obj.Email || originalData.Email;
                     dataToSend.Status = obj.Status || originalData.Status;
                     dataToSend.Note = obj.Note || originalData.Note;
-                    
+
                     // Handle Project field - check if user changed it
                     const currentProjectArray = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value);
                     const currentProject = currentProjectArray.join(", ");
                     const originalProjectArray = originalData.Project ? originalData.Project.split(',').map(p => p.trim()).filter(p => p) : [];
-                    
+
                     // Compare arrays to check if Project was actually changed
                     // Sort both arrays for accurate comparison
                     const currentSorted = [...currentProjectArray].sort();
                     const originalSorted = [...originalProjectArray].sort();
-                    
-                    const projectChanged = currentSorted.length !== originalSorted.length || 
-                                          !currentSorted.every((p, i) => p === originalSorted[i]);
-                    
+
+                    const projectChanged = currentSorted.length !== originalSorted.length ||
+                        !currentSorted.every((p, i) => p === originalSorted[i]);
+
                     console.log('Project comparison:', {
                         original: originalProjectArray,
                         current: currentProjectArray,
                         changed: projectChanged
                     });
-                    
+
                     dataToSend.Project = projectChanged ? currentProject : originalData.Project;
-                    
+
                     dataToSend.PropertyType = obj.PropertyType || originalData.PropertyType;
                     dataToSend.Budget = obj.Budget || originalData.Budget;
                     dataToSend.LocationPrefer = obj.LocationPrefer || originalData.LocationPrefer;
-                    
+
                     const currentFollowUp = formatDate(obj.FollowUpDateTime);
                     dataToSend.FollowUpDateTime = currentFollowUp || originalData.FollowUpDateTime;
-                    
+
                     // Use new photo if uploaded, otherwise keep existing
                     dataToSend.photo = photoData || originalData.existingImg || '';
                     dataToSend.existingImg = originalData.existingImg || '';
-                    
+
                     dataToSend.UserName = obj.UserName;
                     dataToSend.UserContact = obj.UserContact;
                     dataToSend.Timestamp = formatDate(new Date());
-                    
+
                 } else {
                     // New record - send all fields
                     if (obj.Contact && obj.Contact.length === 10) {
                         obj.Contact = '91' + obj.Contact;
                     }
-                    
+
                     obj.Timestamp = formatDate(new Date());
                     obj.FollowUpDateTime = formatDate(obj.FollowUpDateTime);
                     obj.Project = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(", ");
                     obj.photo = photoData || '';
-                    
+
                     Object.assign(dataToSend, obj);
                 }
 
                 console.log('Sending data:', dataToSend); // Debug log
-                
+
                 // Try with POST request
                 try {
                     const response = await fetch(SCRIPT_URL, {
@@ -377,7 +407,7 @@
                             "Content-Type": "text/plain;charset=utf-8",
                         }
                     });
-                    
+
                     const msg = await response.text();
                     console.log('Server response:', msg);
                     alert(msg || 'Record saved successfully!');
@@ -386,10 +416,10 @@
                     const msg = isUpdate ? 'Record Updated Successfully (Sent)' : 'New Record Added Successfully (Sent)';
                     alert(msg + '\n\nPlease refresh to see changes.');
                 }
-                
+
                 btn.innerText = "SAVE RECORD";
                 btn.disabled = false;
-                
+
                 // Redirect only if URL is configured
                 if (shouldRedirect) {
                     setTimeout(() => {
@@ -401,7 +431,7 @@
                         location.reload();
                     }, 1500);
                 }
-                
+
             } catch (error) {
                 console.error('Submission error:', error);
                 alert('Error submitting form: ' + error.message);
@@ -414,12 +444,12 @@
             const pin = prompt("Enter PIN to delete:");
             const idx = document.getElementById('rowIndex').value;
             if (pin && idx) {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({action:"delete", rowIndex:idx, pin:pin}) }).then(r => r.text());
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "delete", rowIndex: idx, pin: pin }) }).then(r => r.text());
                 alert(res); location.reload();
             }
         }
         function toggleOther(sel, target) { document.getElementById(target).classList.toggle('hidden', sel.value !== 'Other'); }
     </script>
 </body>
-</html>
 
+</html>

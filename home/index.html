@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Follow-up Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #eaedf5;
+      --shadow-light: #ffffff;
+      --shadow-dark: #a3b1c6;
+      --accent: #3056fb;
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Neumorphic Style */
+    .neu-card {
+      background: #ffffff;
+      border-radius: 30px;
+      box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
+    }
+
+    .neu-inset {
+      background: var(--bg);
+      border-radius: 20px;
+      box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+    }
+
+    .blue-gradient {
+      background: linear-gradient(135deg, #4b6efb 0%, #3056fb 100%);
+      box-shadow: 4px 4px 10px rgba(48, 86, 251, 0.3);
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: var(--shadow-dark);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="p-4 md:p-8">
+
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="neu-card p-6 text-center">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Today's Leads</p>
+        <h3 id="todayCount" class="text-3xl font-black text-slate-800 mt-1">0</h3>
+      </div>
+      <div class="neu-card p-6 text-center">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cities Covered</p>
+        <h3 id="cityCount" class="text-3xl font-black text-slate-800 mt-1">0</h3>
+      </div>
+      <div class="neu-card p-6 text-center">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Professions</p>
+        <h3 id="profCount" class="text-3xl font-black text-slate-800 mt-1">0</h3>
+      </div>
+      <div class="neu-card p-6 text-center blue-gradient text-white">
+        <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Total Database</p>
+        <h3 id="totalCount" class="text-3xl font-black mt-1">0</h3>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="neu-card p-8">
+        <h4 class="text-xs font-bold text-slate-500 uppercase mb-6">Lead Status Distribution</h4>
+        <div class="h-64"><canvas id="statusChart"></canvas></div>
+      </div>
+      <div class="neu-card p-8">
+        <h4 class="text-xs font-bold text-slate-500 uppercase mb-6">Leads by Profession</h4>
+        <div class="h-64"><canvas id="profBarChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="neu-card overflow-hidden">
+      <div class="p-6 border-b border-slate-200/50 flex justify-between items-center">
+        <h2 class="font-black text-slate-700 uppercase text-sm tracking-tighter">📅 Today's Follow-up Schedule</h2>
+        <span id="currentDate"
+          class="text-[10px] font-bold text-blue-600 bg-white px-3 py-1 rounded-full shadow-sm"></span>
+      </div>
+      <div class="overflow-x-auto custom-scroll">
+        <table class="w-full text-left">
+          <thead class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100/30">
+            <tr>
+              <th class="px-6 py-4">Client</th>
+              <th class="px-6 py-4">Project & Property</th>
+              <th class="px-6 py-4">Status</th>
+              <th class="px-6 py-4">Follow-up Time</th>
+              <th class="px-6 py-4">Agent</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="text-slate-700">
+          </tbody>
+        </table>
+      </div>
+      <div id="noData" class="hidden p-20 text-center text-slate-400 font-bold italic">No follow-ups scheduled for
+        today.</div>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+    const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
+    const RANGE = 'Leads!A2:P'; // Matches your headers
+
+
+    async function init() {
+      const todayStr = new Date().toLocaleDateString('en-GB'); // Format: DD/MM/YYYY
+      document.getElementById('currentDate').innerText = todayStr;
+
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+      const res = await fetch(url).then(r => r.json());
+      const rows = res.values || [];
+
+      // 1. Calculations
+      const cities = new Set();
+      const proms = new Set();
+      const statusMap = {};
+      const profMap = {};
+
+      const todayLeads = rows.filter(row => {
+        const followDate = row[12] ? row[12].split(' ')[0] : '';
+        if (row[3]) cities.add(row[3]);
+        if (row[4]) {
+          proms.add(row[4]);
+          profMap[row[4]] = (profMap[row[4]] || 0) + 1;
+        }
+        statusMap[row[6]] = (statusMap[row[6]] || 0) + 1;
+        return followDate === todayStr;
+      });
+
+      // 2. Set Stat Details
+      document.getElementById('todayCount').innerText = todayLeads.length;
+      document.getElementById('cityCount').innerText = cities.size;
+      document.getElementById('profCount').innerText = proms.size;
+      document.getElementById('totalCount').innerText = rows.length;
+
+      // 3. Render Table (Only Today)
+      const tbody = document.getElementById('tableBody');
+      if (todayLeads.length === 0) {
+        document.getElementById('noData').classList.remove('hidden');
+      } else {
+        todayLeads.forEach(row => {
+          tbody.innerHTML += `
+                        <tr class="border-b border-slate-200/50 hover:bg-white/40 transition-all">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-slate-800">${row[1]}</div>
+                                <div class="text-[10px] text-slate-400 font-bold">${row[2]}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-xs font-black text-blue-600 uppercase">${row[8] || 'N/A'}</div>
+                                <div class="text-[10px] text-slate-500 font-bold italic">${row[9] || '-'}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-white shadow-inner ${row[6] === 'Hot' ? 'text-orange-500' : 'text-slate-400'}">
+                                    ${row[6] || 'New'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-xs font-bold text-slate-600">${row[12].split(' ')[1] || '--:--'}</td>
+                            <td class="px-6 py-4 text-[10px] font-bold text-slate-400">${row[13]}</td>
+                        </tr>
+                    `;
+        });
+      }
+
+      // 4. Charts (Interactive)
+      renderCharts(statusMap, profMap);
+    }
+
+    function renderCharts(statusMap, profMap) {
+      // Status Donut (Gradient styling)
+      new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(statusMap),
+          datasets: [{
+            data: Object.values(statusMap),
+            backgroundColor: ['#3056fb', '#4b6efb', '#a3b1c6', '#ffffff'],
+            borderWidth: 0,
+            hoverOffset: 20
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { weight: 'bold', size: 10 } } } }
+        }
+      });
+
+      // Profession Bar
+      new Chart(document.getElementById('profBarChart'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(profMap),
+          datasets: [{
+            label: 'Leads',
+            data: Object.values(profMap),
+            backgroundColor: '#3056fb',
+            borderRadius: 10,
+            barThickness: 20
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true, grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } },
+            x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' } } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
