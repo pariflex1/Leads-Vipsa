@@ -8,7 +8,7 @@
     <meta name="description" content="Lead Management Dashboard">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <title>Lead Pro Dashboard</title>
+    <title>Lead Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -203,6 +203,11 @@
                 </h1>
             </div>
             <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
+                
+                <a href="#" onclick="switchTab('home')" id="desk-tab-home"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
+                    <i class="fa-solid fa-home w-5"></i> Dashboard
+                </a>
                 <a href="#" onclick="switchTab('leads')" id="desk-tab-leads"
                     class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
                     <i class="fa-solid fa-list-ul w-5"></i> Leads
@@ -210,10 +215,6 @@
                 <a href="#" onclick="switchTab('form')" id="desk-tab-form"
                     class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
                     <i class="fa-solid fa-plus-circle w-5"></i> New Entry
-                </a>
-                <a href="#" onclick="switchTab('home')" id="desk-tab-home"
-                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
-                    <i class="fa-solid fa-home w-5"></i> Home
                 </a>
                 <a href="#" onclick="switchTab('ai')" id="desk-tab-ai"
                     class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
