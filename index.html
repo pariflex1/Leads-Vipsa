@@ -545,32 +545,20 @@
             <span class="text-[10px] font-bold">Entry</span>
         </button>
 
-        <!-- Center Home Button -->
-        <button onclick="switchTab('home')"
-            class="home-btn-mobile -mb-6 bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transform transition active:scale-95 hover:scale-105 z-50 border-4 border-slate-50"
+        
+        <button onclick="switchTab('home')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="home">
-            <i class="fa-solid fa-home text-xl"></i>
+            <i class="fa-solid fa-dashboard text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">Dashboard</span>
         </button>
-
+        
         <button onclick="switchTab('ai')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="ai">
             <i class="fa-solid fa-robot text-xl mb-1"></i>
             <span class="text-[10px] font-bold">AI</span>
         </button>
 
-        <button onclick="confirmLogout()" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
-            data-tab="profile">
-            <i class="fa-solid fa-user text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">Profile</span>
-        </button>
-
-        <button onclick="confirmLogout()" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
-            data-tab="profile">
-            <i class="fa-solid fa-user text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">Profile</span>
-        </button>
-    </div>
-
+      
     <!-- MODALS -->
     <!-- Lead Detail Modal -->
     <div id="leadModal"
