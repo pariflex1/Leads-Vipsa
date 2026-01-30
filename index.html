@@ -8,154 +8,154 @@
     <meta name="description" content="Lead Management Dashboard">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <title>Lead Dashboard</title>
+    <title>Lead Pro Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <style>
-        /* --- GLOBAL & UTILITIES --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            overflow-x: hidden;
-            /* Prevent horizontal scroll */
-        }
+<style>
+    /* --- MODERN UI CONSTANTS --- */
+    :root {
+        --bg-white: #ffffff;
+        --text-black: #000000;
+        --text-muted: #64748b;
+        --primary-blue: #2563eb;
+        --border-color: #e2e8f0;
+        --radius: 0.75rem;
+    }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background-color: var(--bg-white);
+        color: var(--text-black);
+        margin: 0;
+        line-height: 1.6;
+    }
 
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
+    /* --- TYPOGRAPHY --- */
+    h1, h2, h3, .heading-text {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        color: var(--text-black);
+        letter-spacing: -0.02em;
+    }
 
-        .auth-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
+    p, span, label, input, select, textarea {
+        font-size: 1rem !important;
+        color: var(--text-black);
+    }
 
-        [v-cloak] {
-            display: none;
-        }
+    /* --- SEARCH BAR FIX --- */
+    .search-container {
+        position: relative;
+        width: 100%;
+    }
 
-        /* --- DASHBOARD LAYOUT --- */
-        /* Sidebar (Desktop) */
-        .sidebar-link {
-            transition: all 0.3s ease;
-        }
+    .search-container i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none; /* Icon won't block clicks */
+        z-index: 10;
+    }
 
-        .sidebar-link.active {
-            background-color: #eff6ff;
-            color: #2563eb;
-            font-weight: 600;
-        }
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem !important; /* Extra left padding to clear icon */
+        background-color: #f8fafc !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: var(--radius) !important;
+        transition: all 0.2s ease;
+    }
 
-        .sidebar-link:hover:not(.active) {
-            background-color: #f8fafc;
-            color: #475569;
-        }
+    .search-input:focus {
+        background-color: #ffffff !important;
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+        outline: none;
+    }
 
-        /* Bottom Nav (Mobile) */
-        .nav-item {
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    /* --- BUTTONS --- */
+    .btn-main {
+        background-color: var(--primary-blue) !important;
+        color: #ffffff !important;
+        padding: 0.8rem 1.5rem;
+        border-radius: var(--radius);
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s, filter 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
 
-        .nav-item.active {
-            color: #2563eb;
-        }
+    .btn-main:hover {
+        filter: brightness(1.1);
+    }
 
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 4px;
-            background: #2563eb;
-            border-radius: 0 0 4px 4px;
-        }
+    .btn-main:active {
+        transform: scale(0.97);
+    }
 
-        /* Floating Home Button (Mobile) */
-        .home-btn-mobile {
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-        }
+    /* --- CARDS & SECTIONS --- */
+    .content-card {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
 
-        /* --- AI CHAT STYLES --- */
-        :root {
-            --ai-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --ai-secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
+    /* --- TABLE STYLING --- */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .ai-message {
-            animation: slideIn 0.3s ease-out;
-        }
+    th {
+        background: #f8fafc;
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.85rem !important;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-color);
+    }
 
-        .ai-message.bot .avatar {
-            background: var(--ai-primary-gradient);
-        }
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-        .ai-message.user .avatar {
-            background: var(--ai-secondary-gradient);
-        }
+    /* --- NAVIGATION --- */
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.8rem 1rem;
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--text-black);
+        font-weight: 500;
+        transition: 0.2s;
+    }
 
-        .ai-message.user .message-content {
-            background: var(--ai-primary-gradient);
-            color: white;
-        }
+    .sidebar-link.active {
+        background-color: var(--primary-blue);
+        color: #ffffff;
+    }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+    .sidebar-link:hover:not(.active) {
+        background-color: #f1f5f9;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Typing Dots */
-        .typing-dots span {
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-
-            0%,
-            100% {
-                opacity: 0.5;
-                transform: translateY(0);
-            }
-
-            50% {
-                opacity: 1;
-                transform: translateY(-5px);
-            }
-        }
-
-        /* --- FORM STYLES --- */
-        /* Specific adjustments to make form fit in dashboard */
-        #view-form .form-card {
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            background: transparent;
-        }
-    </style>
+    [v-cloak] { display: none; }
+</style>
 </head>
 
 <body class="text-slate-800">
@@ -206,7 +206,7 @@
                 
                 <a href="#" onclick="switchTab('home')" id="desk-tab-home"
                     class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
-                    <i class="fa-solid fa-home w-5"></i> Dashboard
+                    <i class="fa-solid fa-home w-5"></i> Home
                 </a>
                 <a href="#" onclick="switchTab('leads')" id="desk-tab-leads"
                     class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
@@ -534,18 +534,19 @@
     <div id="bottomNav"
         class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 pb-safe z-40 transition-transform duration-300 translate-y-full px-6 py-2 flex justify-between items-end h-20">
 
+        <button onclick="switchTab('home')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
+            data-tab="home">
+            <i class="fa-solid fa-home text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">Home</span>
+        </button>
+
         <button onclick="switchTab('leads')"
             class="nav-item active flex flex-col items-center gap-1 p-2 text-slate-400 w-14" data-tab="leads">
             <i class="fa-solid fa-list-ul text-xl mb-1"></i>
             <span class="text-[10px] font-bold">Leads</span>
         </button>
 
-        <button onclick="switchTab('home')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
-            data-tab="home">
-            <i class="fa-solid fa-dashboard text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">Dashboard</span>
-        </button>
-      
+             
         <button onclick="switchTab('form')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="form">
             <i class="fa-solid fa-pen-to-square text-xl mb-1"></i>
@@ -557,7 +558,7 @@
         <button onclick="switchTab('ai')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="ai">
             <i class="fa-solid fa-robot text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">AI</span>
+            <span class="text-[10px] font-bold">Assistant</span>
         </button>
 
       
