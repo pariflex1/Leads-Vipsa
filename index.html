@@ -15,145 +15,218 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <style>
-        /* --- GLOBAL & UTILITIES --- */
+        /* --- MODERN UI CONSTANTS --- */
+        :root {
+            --bg-white: #ffffff;
+            --text-black: #000000;
+            --text-muted: #64748b;
+            --primary-blue: #2563eb;
+            --border-color: #e2e8f0;
+            --radius: 0.75rem;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            overflow-x: hidden;
-            /* Prevent horizontal scroll */
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-white);
+            color: var(--text-black);
+            margin: 0;
+            line-height: 1.6;
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+        /* --- TYPOGRAPHY --- */
+        h1,
+        h2,
+        h3,
+        .heading-text {
+            font-size: 1.2rem !important;
+            font-weight: 500 !important;
+            color: var(--text-black);
+            letter-spacing: -0.02em;
         }
 
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
+        p,
+        span,
+        label,
+        input,
+        select,
+        textarea {
+            font-size: 0.75rem !important;
+            color: var(--text-black);
+            font-weight: 500 !important;
+
         }
 
-        .auth-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        /* --- SEARCH BAR FIX --- */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            /* Icon won't block clicks */
+            z-index: 10;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem !important;
+            /* Extra left padding to clear icon */
+            background-color: #f8fafc !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: var(--radius) !important;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            background-color: #ffffff !important;
+            border-color: var(--primary-blue) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+            outline: none;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-main {
+            background-color: var(--primary-blue) !important;
+            color: #ffffff !important;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-main:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-main:active {
+            transform: scale(0.97);
+        }
+
+        /* --- CARDS & SECTIONS --- */
+        .content-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- TABLE STYLING --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem !important;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* --- NAVIGATION --- */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text-black);
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .sidebar-link.active {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background-color: #f1f5f9;
         }
 
         [v-cloak] {
             display: none;
         }
 
-        /* --- DASHBOARD LAYOUT --- */
-        /* Sidebar (Desktop) */
-        .sidebar-link {
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-link.active {
-            background-color: #eff6ff;
-            color: #2563eb;
-            font-weight: 600;
-        }
-
-        .sidebar-link:hover:not(.active) {
-            background-color: #f8fafc;
-            color: #475569;
-        }
-
-        /* Bottom Nav (Mobile) */
+        /* --- BOTTOM NAV (MOBILE) --- */
         .nav-item {
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            /* Muted slate for inactive */
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.5rem 0;
         }
 
+        /* The Active State */
         .nav-item.active {
-            color: #2563eb;
+            color: #2563eb !important;
+            /* Primary blue */
         }
 
+        /* The indicator line above the active icon */
         .nav-item.active::after {
             content: '';
             position: absolute;
-            top: -12px;
+            top: -2px;
+            /* Pull it slightly above the nav bar line */
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
+            width: 24px;
             height: 4px;
             background: #2563eb;
-            border-radius: 0 0 4px 4px;
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
         }
 
-        /* Floating Home Button (Mobile) */
+        /* Ensure the icon scales slightly when active */
+        .nav-item.active i,
+        .nav-item.active svg {
+            transform: translateY(-2px);
+            transition: transform 0.3s ease;
+        }
+
+        /* Floating Home Button Adjustment */
         .home-btn-mobile {
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-        }
-
-        /* --- AI CHAT STYLES --- */
-        :root {
-            --ai-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --ai-secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .ai-message {
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .ai-message.bot .avatar {
-            background: var(--ai-primary-gradient);
-        }
-
-        .ai-message.user .avatar {
-            background: var(--ai-secondary-gradient);
-        }
-
-        .ai-message.user .message-content {
-            background: var(--ai-primary-gradient);
+            background: #2563eb;
             color: white;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-20px);
+            /* Lifts it above the bar */
+            border: 4px solid #ffffff;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Typing Dots */
-        .typing-dots span {
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-
-            0%,
-            100% {
-                opacity: 0.5;
-                transform: translateY(0);
-            }
-
-            50% {
-                opacity: 1;
-                transform: translateY(-5px);
-            }
-        }
-
-        /* --- FORM STYLES --- */
-        /* Specific adjustments to make form fit in dashboard */
-        #view-form .form-card {
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            background: transparent;
+        .auth-gradient {
+            background: radial-gradient(circle at top left, #2563eb, #0f172a);
         }
     </style>
 </head>
@@ -203,6 +276,11 @@
                 </h1>
             </div>
             <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
+
+                <a href="#" onclick="switchTab('home')" id="desk-tab-home"
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
+                    <i class="fa-solid fa-home w-5"></i> Home
+                </a>
                 <a href="#" onclick="switchTab('leads')" id="desk-tab-leads"
                     class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
                     <i class="fa-solid fa-list-ul w-5"></i> Leads
@@ -210,10 +288,6 @@
                 <a href="#" onclick="switchTab('form')" id="desk-tab-form"
                     class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
                     <i class="fa-solid fa-plus-circle w-5"></i> New Entry
-                </a>
-                <a href="#" onclick="switchTab('home')" id="desk-tab-home"
-                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
-                    <i class="fa-solid fa-home w-5"></i> Home
                 </a>
                 <a href="#" onclick="switchTab('ai')" id="desk-tab-ai"
                     class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600">
@@ -225,6 +299,10 @@
                 <button onclick="confirmLogout()"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-left text-sm font-medium text-red-500 hover:bg-red-50 transition">
                     <i class="fa-solid fa-power-off w-5"></i> Logout
+                </button>
+                <button onclick="registerPasskey()"
+                    class="mt-2 flex items-center gap-3 px-4 py-3 rounded-xl w-full text-left text-sm font-medium text-blue-600 hover:bg-blue-50 transition">
+                    <i class="fa-solid fa-fingerprint w-5"></i> Setup Biometric
                 </button>
             </div>
         </aside>
@@ -255,7 +333,13 @@
                         title="Refresh">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
-                    <!-- Mobile Logout is in header usually for space, or we can rely on sidebar logic if we had a drawer. keeping it here for simplicity -->
+                    <!-- Biometric Setup for Mobile -->
+                    <button onclick="registerPasskey()"
+                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                        title="Setup Biometric">
+                        <i class="fa-solid fa-fingerprint"></i>
+                    </button>
+                    <!-- Mobile Logout -->
                     <button onclick="confirmLogout()"
                         class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition">
                         <i class="fa-solid fa-power-off"></i>
@@ -533,11 +617,18 @@
     <div id="bottomNav"
         class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 pb-safe z-40 transition-transform duration-300 translate-y-full px-6 py-2 flex justify-between items-end h-20">
 
+        <button onclick="switchTab('home')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
+            data-tab="home">
+            <i class="fa-solid fa-home text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">Home</span>
+        </button>
+
         <button onclick="switchTab('leads')"
             class="nav-item active flex flex-col items-center gap-1 p-2 text-slate-400 w-14" data-tab="leads">
             <i class="fa-solid fa-list-ul text-xl mb-1"></i>
             <span class="text-[10px] font-bold">Leads</span>
         </button>
+
 
         <button onclick="switchTab('form')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="form">
@@ -545,230 +636,327 @@
             <span class="text-[10px] font-bold">Entry</span>
         </button>
 
-        <!-- Center Home Button -->
-        <button onclick="switchTab('home')"
-            class="home-btn-mobile -mb-6 bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transform transition active:scale-95 hover:scale-105 z-50 border-4 border-slate-50"
-            data-tab="home">
-            <i class="fa-solid fa-home text-xl"></i>
-        </button>
+
 
         <button onclick="switchTab('ai')" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
             data-tab="ai">
             <i class="fa-solid fa-robot text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">AI</span>
+            <span class="text-[10px] font-bold">Assistant</span>
         </button>
 
-        <button onclick="confirmLogout()" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
-            data-tab="profile">
-            <i class="fa-solid fa-user text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">Profile</span>
-        </button>
 
-        <button onclick="confirmLogout()" class="nav-item flex flex-col items-center gap-1 p-2 text-slate-400 w-14"
-            data-tab="profile">
-            <i class="fa-solid fa-user text-xl mb-1"></i>
-            <span class="text-[10px] font-bold">Profile</span>
-        </button>
-    </div>
-
-    <!-- MODALS -->
-    <!-- Lead Detail Modal -->
-    <div id="leadModal"
-        class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-        onclick="closeOnBackdrop(event)">
-        <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]"
-            id="modalContainer">
-            <div class="overflow-y-auto custom-scroll p-6 md:p-8" id="modalContent"></div>
-        </div>
-    </div>
-
-    <!-- Logout Confirm Modal -->
-    <div id="logoutModal"
-        class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs shadow-2xl text-center">
-            <div
-                class="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                <i class="fa-solid fa-power-off"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">Log out?</h3>
-            <div class="flex gap-3 mt-6">
-                <button onclick="document.getElementById('logoutModal').classList.add('hidden')"
-                    class="flex-1 py-3 rounded-2xl border border-slate-200 font-bold text-slate-600">Cancel</button>
-                <button onclick="logout()"
-                    class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold shadow-lg shadow-red-200">Logout</button>
+        <!-- MODALS -->
+        <!-- Lead Detail Modal -->
+        <div id="leadModal"
+            class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            onclick="closeOnBackdrop(event)">
+            <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]"
+                id="modalContainer">
+                <div class="overflow-y-auto custom-scroll p-6 md:p-8" id="modalContent"></div>
             </div>
         </div>
-    </div>
 
-    <!-- SCRIPTS -->
-    <script>
-        /* --- CONSTANTS & STATE --- */
-        const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
-        const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
-        const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
+        <!-- Logout Confirm Modal -->
+        <div id="logoutModal"
+            class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs shadow-2xl text-center">
+                <div
+                    class="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                    <i class="fa-solid fa-power-off"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Log out?</h3>
+                <div class="flex gap-3 mt-6">
+                    <button onclick="document.getElementById('logoutModal').classList.add('hidden')"
+                        class="flex-1 py-3 rounded-2xl border border-slate-200 font-bold text-slate-600">Cancel</button>
+                    <button onclick="logout()"
+                        class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold shadow-lg shadow-red-200">Logout</button>
+                </div>
+            </div>
+        </div>
 
-        let allLeads = []; // Shared Global State
-        let currentTab = 'leads';
-        let rawLeads = [];
-        let displayedCount = 0;
-        const BATCH_SIZE = 100;
-        let checkInterval = null;
-        let lastLeadCount = 0;
-        let photoData = null; // For Form
-        let originalFormData = {}; // For Form Edit Mode
-        let aiSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(7);
+        <!-- SCRIPTS -->
+        <script>
+            /* --- CONSTANTS & STATE --- */
+            const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+            const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+            const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
 
-        /* --- INITIALIZATION --- */
-        window.onload = () => {
-            // Check Auth
-            if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('displayName')) {
-                document.getElementById('passkeySection').classList.remove('hidden');
-                enterApp(localStorage.getItem('displayName'));
-            } else if (localStorage.getItem('wasLoggedIn') === 'true') {
-                document.getElementById('passkeySection').classList.remove('hidden');
+            let allLeads = []; // Shared Global State
+            let currentTab = 'leads';
+            let rawLeads = [];
+            let displayedCount = 0;
+            const BATCH_SIZE = 100;
+            let checkInterval = null;
+            let lastLeadCount = 0;
+            let photoData = null; // For Form
+            let originalFormData = {}; // For Form Edit Mode
+            let aiSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(7);
+
+            /* --- INITIALIZATION --- */
+            window.onload = () => {
+                // Check Auth
+                if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('displayName')) {
+                    document.getElementById('passkeySection').classList.remove('hidden');
+                    enterApp(localStorage.getItem('displayName'));
+                } else if (localStorage.getItem('wasLoggedIn') === 'true') {
+                    document.getElementById('passkeySection').classList.remove('hidden');
+                }
+
+                // Setup Form Defaults
+                const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
+                document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
+            };
+
+            /* --- NAVIGATION --- */
+            function switchTab(tabId) {
+                currentTab = tabId;
+
+                // 1. Hide all views
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+
+                // 2. Show target view
+                const targetView = document.getElementById(`view-${tabId}`);
+                if (targetView) targetView.classList.remove('hidden');
+
+                // 3. Update Sidebar (Desktop)
+                document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+                const deskTab = document.getElementById(`desk-tab-${tabId}`);
+                if (deskTab) deskTab.classList.add('active');
+
+                // 4. Update Bottom Nav (Mobile)
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-blue-600'));
+                // Center button special case handled by CSS primarily, but logic remains
+                const mobileBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`) || document.querySelector(`button[data-tab="${tabId}"]`);
+                if (mobileBtn && !mobileBtn.classList.contains('home-btn-mobile')) {
+                    mobileBtn.classList.add('active', 'text-blue-600');
+                }
+
+                // 5. Context Actions
+                if (tabId === 'leads' && allLeads.length === 0) loadLeads();
+                if (tabId === 'form') { initializeFormProjects(); }
+                if (tabId === 'home') updateHomeStats();
+
+                // Scroll top
+                document.getElementById('content-area').scrollTo(0, 0);
             }
 
-            // Setup Form Defaults
-            const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
-            document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
-        };
-
-        /* --- NAVIGATION --- */
-        function switchTab(tabId) {
-            currentTab = tabId;
-
-            // 1. Hide all views
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-
-            // 2. Show target view
-            const targetView = document.getElementById(`view-${tabId}`);
-            if (targetView) targetView.classList.remove('hidden');
-
-            // 3. Update Sidebar (Desktop)
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-            const deskTab = document.getElementById(`desk-tab-${tabId}`);
-            if (deskTab) deskTab.classList.add('active');
-
-            // 4. Update Bottom Nav (Mobile)
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-blue-600'));
-            // Center button special case handled by CSS primarily, but logic remains
-            const mobileBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`) || document.querySelector(`button[data-tab="${tabId}"]`);
-            if (mobileBtn && !mobileBtn.classList.contains('home-btn-mobile')) {
-                mobileBtn.classList.add('active', 'text-blue-600');
+            /* --- AUTHENTICATION --- */
+            async function loginWithPin() {
+                const u = document.getElementById('userInp').value.trim();
+                const p = document.getElementById('pinInp').value.trim();
+                if (!u || !p) return alert("Enter Username and PIN");
+                const btn = document.getElementById('loginBtn');
+                btn.innerText = "Checking...";
+                try {
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:D?key=${API_KEY}`;
+                    const res = await fetch(url).then(r => r.json());
+                    const match = (res.values || []).find(r => String(r[0]).trim() === u && String(r[1]).trim() === p);
+                    if (match) {
+                        localStorage.setItem('isAuth', 'true');
+                        localStorage.setItem('displayName', match[2]);
+                        localStorage.setItem('wasLoggedIn', 'true');
+                        localStorage.setItem('lastUserAttempt', u); // Store for passkey registration context
+                        enterApp(match[2]);
+                    } else { alert("Invalid inputs"); btn.innerText = "Verify PIN"; }
+                } catch (e) { alert("Login Error"); btn.innerText = "Verify PIN"; }
             }
 
-            // 5. Context Actions
-            if (tabId === 'leads' && allLeads.length === 0) loadLeads();
-            if (tabId === 'form') { initializeFormProjects(); }
-            if (tabId === 'home') updateHomeStats();
+            async function loginWithPasskey() {
+                const username = document.getElementById('userInp').value.trim();
+                if (!username) return alert("Please enter your Username first to use Passkey");
 
-            // Scroll top
-            document.getElementById('content-area').scrollTo(0, 0);
-        }
+                const btn = document.querySelector('button[onclick="loginWithPasskey()"]');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...';
 
-        /* --- AUTHENTICATION --- */
-        async function loginWithPin() {
-            const u = document.getElementById('userInp').value.trim();
-            const p = document.getElementById('pinInp').value.trim();
-            if (!u || !p) return alert("Enter Username and PIN");
-            const btn = document.getElementById('loginBtn');
-            btn.innerText = "Checking...";
-            try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:D?key=${API_KEY}`;
-                const res = await fetch(url).then(r => r.json());
-                const match = (res.values || []).find(r => String(r[0]).trim() === u && String(r[1]).trim() === p);
-                if (match) {
-                    localStorage.setItem('isAuth', 'true');
-                    localStorage.setItem('displayName', match[2]);
-                    localStorage.setItem('wasLoggedIn', 'true');
-                    enterApp(match[2]);
-                } else { alert("Invalid inputs"); btn.innerText = "Verify PIN"; }
-            } catch (e) { alert("Login Error"); btn.innerText = "Verify PIN"; }
-        }
+                try {
+                    // 1. Get stored credential from backend
+                    const res = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'get_passkey_data', username: username })
+                    }).then(r => r.json());
 
-        function loginWithPasskey() {
-            if (localStorage.getItem('isAuth') === 'true') enterApp(localStorage.getItem('displayName'));
-        }
+                    if (res.status !== 'success') {
+                        throw new Error("No passkey found for this user. Please login with PIN and set it up first.");
+                    }
 
-        function enterApp(name) {
-            document.getElementById('authScreen').classList.add('hidden');
-            const app = document.getElementById('mainApp');
-            app.classList.remove('hidden');
-            document.getElementById('bottomNav').classList.remove('translate-y-full'); // Slide up nav
-            setTimeout(() => app.classList.add('opacity-100'), 50);
+                    const storedCredential = JSON.parse(res.credential);
 
-            // Set User Info for Form
-            document.getElementById('UserName').value = name;
+                    // 2. Prepare WebAuthn options
+                    const getOptions = {
+                        publicKey: {
+                            challenge: Uint8Array.from(atob("CHALLENGE_STRING_BASE64"), c => c.charCodeAt(0)), // In real prod, this comes from server
+                            allowCredentials: [{
+                                id: base64ToBuffer(storedCredential.id),
+                                type: 'public-key',
+                                transports: ['internal']
+                            }],
+                            userVerification: 'required',
+                            timeout: 60000
+                        }
+                    };
 
-            loadLeads(); // Load data
-            // Start Polling
-            checkInterval = setInterval(checkForUpdates, 30000);
+                    const assertion = await navigator.credentials.get(getOptions);
 
-            // Default Tab
-            switchTab('leads');
-        }
+                    // 3. Simple verification (In real prod, signature is verified on server)
+                    if (assertion) {
+                        // For this simple demo/implementation, if the device produces an assertion, we trust it
+                        // since we are using Google Sheets as a lightweight backend.
+                        const nameRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:C?key=${API_KEY}`).then(r => r.json());
+                        const match = (nameRes.values || []).find(r => String(r[0]).trim() === username);
 
-        function logout() {
-            localStorage.removeItem('isAuth');
-            location.reload();
-        }
-        function confirmLogout() { document.getElementById('logoutModal').classList.remove('hidden'); }
-
-        /* --- LEADS LOGIC --- */
-        async function loadLeads() {
-            const loader = document.getElementById('loader');
-            loader.classList.remove('hidden');
-            try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`;
-                const res = await fetch(url).then(r => r.json());
-                const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
-
-                rawLeads = (res.values || []).map(row => {
-                    let obj = {};
-                    headers.forEach((h, i) => obj[h] = row[i] || '');
-                    return obj;
-                });
-
-                if (lastLeadCount === 0) lastLeadCount = rawLeads.length;
-
-                // Sort Newest First
-                allLeads = [...rawLeads].reverse();
-
-                renderNextBatch(true);
-            } catch (e) { console.error(e); }
-            loader.classList.add('hidden');
-        }
-
-        function renderNextBatch(reset = false) {
-            const grid = document.getElementById('leadGrid');
-            const loadBtnContainer = document.getElementById('loadMoreContainer');
-
-            if (reset) { grid.innerHTML = ''; displayedCount = 0; }
-
-            if (allLeads.length === 0) {
-                document.getElementById('emptyState').classList.remove('hidden');
-                loadBtnContainer.classList.add('hidden');
-                return;
-            }
-            document.getElementById('emptyState').classList.add('hidden');
-
-            const batch = allLeads.slice(displayedCount, displayedCount + BATCH_SIZE);
-            if (batch.length === 0) {
-                loadBtnContainer.classList.add('hidden');
-                return;
+                        if (match) {
+                            localStorage.setItem('isAuth', 'true');
+                            localStorage.setItem('displayName', match[2]);
+                            localStorage.setItem('wasLoggedIn', 'true');
+                            enterApp(match[2]);
+                        }
+                    }
+                } catch (e) {
+                    alert("Passkey Login Failed: " + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-face-smile text-blue-500"></i> Use Passkey';
+                }
             }
 
-            const html = batch.map((lead, index) => {
-                const globalIndex = displayedCount + index;
-                const statusColor = getStatusColor(lead.Status);
-                const imgUrl = getProxiedImageUrl(lead.ClientImageUrl, lead.Name);
+            async function registerPasskey() {
+                const username = localStorage.getItem('lastUserAttempt') || document.getElementById('UserName').value;
+                if (!username) return alert("User session not found. Please log in first.");
 
-                // Derived Colors for Status Badge
-                const badgeBg = statusColor.replace('bg-', 'bg-').replace('500', '50');
-                const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
+                if (!confirm("Add this device for Fingerprint/Face ID login?")) return;
 
-                return `
+                try {
+                    const publicKeyCredentialCreationOptions = {
+                        challenge: Uint8Array.from(atob("CHALLENGE_STRING_BASE64"), c => c.charCodeAt(0)),
+                        rp: { name: "Lead Pro", id: window.location.hostname || "localhost" },
+                        user: {
+                            id: Uint8Array.from(username, c => c.charCodeAt(0)),
+                            name: username,
+                            displayName: username
+                        },
+                        pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                        authenticatorSelection: { userVerification: "required" },
+                        timeout: 60000
+                    };
+
+                    const credential = await navigator.credentials.create({
+                        publicKey: publicKeyCredentialCreationOptions
+                    });
+
+                    if (credential) {
+                        const credObject = {
+                            id: bufferToBase64(credential.rawId),
+                            type: credential.type
+                        };
+
+                        const res = await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                action: 'register_passkey',
+                                username: username,
+                                credential: JSON.stringify(credObject)
+                            })
+                        }).then(r => r.json());
+
+                        if (res.status === 'success') {
+                            alert("Passkey registered successfully! You can now use biometrics to login.");
+                        } else {
+                            throw new Error(res.message);
+                        }
+                    }
+                } catch (e) {
+                    alert("Registration Failed: " + (e.name === 'NotAllowedError' ? "Cancelled by user" : e.message));
+                }
+            }
+
+            // WebAuthn Helpers
+            function bufferToBase64(buffer) {
+                return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+            }
+            function base64ToBuffer(base64) {
+                return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
+            }
+
+            function enterApp(name) {
+                document.getElementById('authScreen').classList.add('hidden');
+                const app = document.getElementById('mainApp');
+                app.classList.remove('hidden');
+                document.getElementById('bottomNav').classList.remove('translate-y-full'); // Slide up nav
+                setTimeout(() => app.classList.add('opacity-100'), 50);
+
+                // Set User Info for Form
+                document.getElementById('UserName').value = name;
+
+                loadLeads(); // Load data
+                // Start Polling
+                checkInterval = setInterval(checkForUpdates, 30000);
+
+                // Default Tab
+                switchTab('leads');
+            }
+
+            function logout() {
+                localStorage.removeItem('isAuth');
+                location.reload();
+            }
+            function confirmLogout() { document.getElementById('logoutModal').classList.remove('hidden'); }
+
+            /* --- LEADS LOGIC --- */
+            async function loadLeads() {
+                const loader = document.getElementById('loader');
+                loader.classList.remove('hidden');
+                try {
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`;
+                    const res = await fetch(url).then(r => r.json());
+                    const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
+
+                    rawLeads = (res.values || []).map(row => {
+                        let obj = {};
+                        headers.forEach((h, i) => obj[h] = row[i] || '');
+                        return obj;
+                    });
+
+                    if (lastLeadCount === 0) lastLeadCount = rawLeads.length;
+
+                    // Sort Newest First
+                    allLeads = [...rawLeads].reverse();
+
+                    renderNextBatch(true);
+                } catch (e) { console.error(e); }
+                loader.classList.add('hidden');
+            }
+
+            function renderNextBatch(reset = false) {
+                const grid = document.getElementById('leadGrid');
+                const loadBtnContainer = document.getElementById('loadMoreContainer');
+
+                if (reset) { grid.innerHTML = ''; displayedCount = 0; }
+
+                if (allLeads.length === 0) {
+                    document.getElementById('emptyState').classList.remove('hidden');
+                    loadBtnContainer.classList.add('hidden');
+                    return;
+                }
+                document.getElementById('emptyState').classList.add('hidden');
+
+                const batch = allLeads.slice(displayedCount, displayedCount + BATCH_SIZE);
+                if (batch.length === 0) {
+                    loadBtnContainer.classList.add('hidden');
+                    return;
+                }
+
+                const html = batch.map((lead, index) => {
+                    const globalIndex = displayedCount + index;
+                    const statusColor = getStatusColor(lead.Status);
+                    const imgUrl = getProxiedImageUrl(lead.ClientImageUrl, lead.Name);
+
+                    // Derived Colors for Status Badge
+                    const badgeBg = statusColor.replace('bg-', 'bg-').replace('500', '50');
+                    const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
+
+                    return `
                 <div onclick="openLeadModal(${globalIndex})" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all cursor-pointer flex items-center gap-3 md:gap-4 group">
                     <!-- Avatar -->
                     <div class="relative shrink-0">
@@ -777,93 +965,104 @@
                     </div>
                     
                     <!-- Content -->
-                    <div class="flex-1 min-w-0">
-                        <!-- Name & Time -->
-                        <div class="flex justify-between items-start mb-0.5">
-                            <h3 class="font-bold text-slate-800 text-sm md:text-base truncate pr-2 group-hover:text-blue-600 transition">${lead.Name || 'Unknown'}</h3>
-                             <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap shrink-0">${timeAgo(lead.Timestamp).replace(' ago', '')}</span>
+                    <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between min-w-0 gap-2 md:gap-4">
+                        <div class="min-w-0">
+                            <!-- Name -->
+                            <h3 class="font-bold text-slate-800 text-sm md:text-base truncate group-hover:text-blue-600 transition">${lead.Name || 'Unknown'}</h3>
+                            
+                            <!-- Profession - Contact -->
+                            <p class="text-[11px] text-slate-500 font-medium truncate">
+                                <span class="font-bold text-slate-700">${lead.Profession || 'N/A'}</span> <span class="text-slate-300 mx-1">-</span> ${lead.Contact}
+                            </p>
                         </div>
-                        
-                        <!-- Profession - Contact -->
-                        <p class="text-[11px] text-slate-500 font-medium truncate mb-2.5">
-                            <span class="font-bold text-slate-700">${lead.Profession || 'N/A'}</span> <span class="text-slate-300 mx-1">-</span> ${lead.Contact}
-                        </p>
 
-                        <!-- Badges Row -->
-                        <div class="flex flex-wrap gap-2">
+                        <!-- Right Side: Badges & Time -->
+                        <div class="flex flex-wrap md:flex-nowrap items-center gap-2 md:ml-auto">
                              <span class="px-2 py-1 rounded-md bg-rose-50 text-rose-600 text-[10px] font-bold truncate max-w-[80px]">${lead.City}</span>
                              <span class="px-2 py-1 rounded-md ${badgeBg} ${badgeText} text-[10px] font-bold truncate">${lead.Status || 'New'}</span>
                              <span class="px-2 py-1 rounded-md bg-indigo-50 text-indigo-600 text-[10px] font-bold truncate max-w-[100px]">${lead.Project || 'Any'}</span>
+                             <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap ml-1">${timeAgo(lead.Timestamp).replace(' ago', '')}</span>
                         </div>
                     </div>
                 </div>`;
-            }).join('');
+                }).join('');
 
-            grid.insertAdjacentHTML('beforeend', html);
-            displayedCount += batch.length;
+                grid.insertAdjacentHTML('beforeend', html);
+                displayedCount += batch.length;
 
-            // Toggle Load More Button
-            if (displayedCount >= allLeads.length) loadBtnContainer.classList.add('hidden');
-            else loadBtnContainer.classList.remove('hidden');
-        }
+                // Toggle Load More Button
+                if (displayedCount >= allLeads.length) loadBtnContainer.classList.add('hidden');
+                else loadBtnContainer.classList.remove('hidden');
+            }
 
-        async function checkForUpdates() {
-            try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:A?key=${API_KEY}`; // Lightweight check
-                const res = await fetch(url).then(r => r.json());
-                const count = (res.values || []).length;
-                if (count > lastLeadCount) {
-                    showNotification(`${count - lastLeadCount} New Leads!`);
-                    loadLeads();
+            async function checkForUpdates() {
+                try {
+                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:A?key=${API_KEY}`; // Lightweight check
+                    const res = await fetch(url).then(r => r.json());
+                    const count = (res.values || []).length;
+                    if (count > lastLeadCount) {
+                        showNotification(`${count - lastLeadCount} New Leads!`);
+                        loadLeads();
+                    }
+                    lastLeadCount = count;
+                } catch (e) { }
+            }
+
+            /* --- HELPER UTILS --- */
+            function getProxiedImageUrl(url, name) {
+                if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
+                let cleanUrl = String(url).trim();
+                const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z]+)/);
+                if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
+                return cleanUrl;
+            }
+
+            function getStatusColor(s) {
+                s = String(s).toLowerCase();
+                if (s.includes('hot')) return 'bg-red-500';
+                if (s.includes('closed') || s.includes('won')) return 'bg-green-500';
+                if (s.includes('visit')) return 'bg-purple-500';
+                return 'bg-blue-500';
+            }
+
+            function timeAgo(dateString) {
+                if (!dateString) return '';
+
+                // Custom parsing for DD/MM/YYYY HH:MM
+                let date;
+                const parts = String(dateString).trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})/);
+                if (parts) {
+                    // parts: [full, day, month, year, hour, minute]
+                    // months are 0-indexed in JS Date
+                    date = new Date(parts[3], parts[2] - 1, parts[1], parts[4], parts[5]);
+                } else {
+                    date = new Date(dateString.trim());
                 }
-                lastLeadCount = count;
-            } catch (e) { }
-        }
 
-        /* --- HELPER UTILS --- */
-        function getProxiedImageUrl(url, name) {
-            if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
-            let cleanUrl = String(url).trim();
-            const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z]+)/);
-            if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
-            return cleanUrl;
-        }
+                if (isNaN(date.getTime())) return '';
+                const seconds = Math.floor((new Date() - date) / 1000);
+                if (seconds < 60) return 'Just now';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                return Math.floor(hours / 24) + 'd ago';
+            }
 
-        function getStatusColor(s) {
-            s = String(s).toLowerCase();
-            if (s.includes('hot')) return 'bg-red-500';
-            if (s.includes('closed') || s.includes('won')) return 'bg-green-500';
-            if (s.includes('visit')) return 'bg-purple-500';
-            return 'bg-blue-500';
-        }
+            function handleSearch() {
+                const term = document.getElementById('searchInput').value.toLowerCase().trim();
+                const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
+                allLeads = filtered;
+                renderNextBatch(true);
+            }
 
-        function timeAgo(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString.trim()); // Trim whitespace
-            if (isNaN(date.getTime())) return '';
-            const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            return Math.floor(hours / 24) + 'd ago';
-        }
+            /* --- LEAD MODAL --- */
+            function openLeadModal(index) {
+                const lead = allLeads[index]; // Note: This uses the currently sorted/filtered list
+                const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
+                const modalContent = document.getElementById('modalContent');
 
-        function handleSearch() {
-            const term = document.getElementById('searchInput').value.toLowerCase().trim();
-            const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
-            allLeads = filtered;
-            renderNextBatch(true);
-        }
-
-        /* --- LEAD MODAL --- */
-        function openLeadModal(index) {
-            const lead = allLeads[index]; // Note: This uses the currently sorted/filtered list
-            const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
-            const modalContent = document.getElementById('modalContent');
-
-            modalContent.innerHTML = `
+                modalContent.innerHTML = `
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex items-center gap-4">
                         <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" class="w-16 h-16 rounded-2xl object-cover shadow-lg ring-4 ring-white">
@@ -912,191 +1111,191 @@
                     </a>
                 </div>
             `;
-            document.getElementById('leadModal').classList.remove('hidden');
-        }
+                document.getElementById('leadModal').classList.remove('hidden');
+            }
 
-        function closeOnBackdrop(e) { if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); }
+            function closeOnBackdrop(e) { if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); }
 
-        /* --- FORM & EDIT LOGIC --- */
-        async function initializeFormProjects() {
-            if (document.getElementById('Project').options.length > 0) return;
-            try {
-                const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:A?key=${API_KEY}`).then(r => r.json());
-                const sel = document.getElementById('Project');
-                (res.values || []).forEach(p => sel.add(new Option(p[0], p[0])));
-            } catch (e) { }
-        }
+            /* --- FORM & EDIT LOGIC --- */
+            async function initializeFormProjects() {
+                if (document.getElementById('Project').options.length > 0) return;
+                try {
+                    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:A?key=${API_KEY}`).then(r => r.json());
+                    const sel = document.getElementById('Project');
+                    (res.values || []).forEach(p => sel.add(new Option(p[0], p[0])));
+                } catch (e) { }
+            }
 
-        function autoSearch(val) {
-            if (val.length === 10) {
-                const match = rawLeads.find(r => r.Contact && (r.Contact === val || r.Contact === '91' + val));
-                const msg = document.getElementById('statusMsg');
-                if (match) {
-                    msg.className = 'text-[10px] mt-2 font-bold italic text-blue-500';
-                    msg.textContent = 'Existing record found. Switching to edit mode.';
-                    const idx = rawLeads.indexOf(match); // Need raw index, but wait, we need row index from logic
-                    // Actually, we can just fill form. RowIndex calc relies on total count or explicit ID if we had one.
-                    // Simple hack used in original: index in array + 2.
-                    populateEditForm(allLeads.indexOf(match), true); // THIS IS RISKY if filtered. Should find in rawLeads.
-                    // Let's use rawLeads index
-                    const rawIdx = rawLeads.indexOf(match);
-                    populateEditFormRes(match, rawIdx + 2);
-                } else {
-                    msg.className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
-                    msg.textContent = 'New number available.';
-                    document.getElementById('rowIndex').value = '';
-                    document.getElementById('deleteZone').classList.add('hidden');
+            function autoSearch(val) {
+                if (val.length === 10) {
+                    const match = rawLeads.find(r => r.Contact && (r.Contact === val || r.Contact === '91' + val));
+                    const msg = document.getElementById('statusMsg');
+                    if (match) {
+                        msg.className = 'text-[10px] mt-2 font-bold italic text-blue-500';
+                        msg.textContent = 'Existing record found. Switching to edit mode.';
+                        const idx = rawLeads.indexOf(match); // Need raw index, but wait, we need row index from logic
+                        // Actually, we can just fill form. RowIndex calc relies on total count or explicit ID if we had one.
+                        // Simple hack used in original: index in array + 2.
+                        populateEditForm(allLeads.indexOf(match), true); // THIS IS RISKY if filtered. Should find in rawLeads.
+                        // Let's use rawLeads index
+                        const rawIdx = rawLeads.indexOf(match);
+                        populateEditFormRes(match, rawIdx + 2);
+                    } else {
+                        msg.className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
+                        msg.textContent = 'New number available.';
+                        document.getElementById('rowIndex').value = '';
+                        document.getElementById('deleteZone').classList.add('hidden');
+                    }
                 }
             }
-        }
 
-        function populateEditForm(listIndex) {
-            // Called from Modal Edit Button
-            const lead = allLeads[listIndex];
-            // Find original index in rawLeads to set rowIndex correctly
-            const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name); // Simple composite key match
-            if (rawIdx === -1) return alert("Error locating record");
+            function populateEditForm(listIndex) {
+                // Called from Modal Edit Button
+                const lead = allLeads[listIndex];
+                // Find original index in rawLeads to set rowIndex correctly
+                const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name); // Simple composite key match
+                if (rawIdx === -1) return alert("Error locating record");
 
-            document.getElementById('leadModal').classList.add('hidden');
-            switchTab('form');
-            populateEditFormRes(lead, rawIdx + 2);
-        }
-
-        function populateEditFormRes(data, rowIdx) {
-            // Fill Form Logic similar to original
-            document.getElementById('rowIndex').value = rowIdx;
-
-            // Basic fields
-            document.getElementById('Name').value = data.Name || '';
-            let contact = data.Contact || '';
-            if (contact.startsWith('91') && contact.length === 12) contact = contact.substring(2);
-            document.getElementById('Contact').value = contact;
-            document.getElementById('City').value = data.City || 'Jhansi';
-            document.getElementById('Profession').value = data.Profession || 'Business';
-            document.getElementById('Status').value = data.Status || 'New';
-            document.getElementById('Note').value = data.Note || '';
-            document.getElementById('Budget').value = data.Budget || '';
-            document.getElementById('PropertyType').value = data.PropertyType || 'Plots';
-            document.getElementById('Email').value = data.Email || '';
-
-            // Projects (Multi)
-            const pArr = (data.Project || '').split(',').map(s => s.trim());
-            const pSel = document.getElementById('Project');
-            for (let opt of pSel.options) opt.selected = pArr.includes(opt.value);
-
-            document.getElementById('deleteZone').classList.remove('hidden');
-            document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-rotate mr-2"></i> Update Record`;
-        }
-
-        document.getElementById('leadForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('saveBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
-            btn.disabled = true;
-
-            try {
-                const formData = new FormData(e.target);
-                const obj = Object.fromEntries(formData);
-                if (obj.Contact.length === 10) obj.Contact = '91' + obj.Contact;
-
-                // Photo
-                if (photoData) obj.photo = photoData;
-                obj.Timestamp = new Date().toLocaleString(); // Simple localized
-
-                // Handle Multi Select
-                const proj = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(', ');
-                obj.Project = proj;
-
-                // Send
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(obj)
-                }); // Fire and forget mostly as CORS blocks response reading often
-
-                alert("Saved Successfully");
-                location.reload();
-            } catch (e) {
-                alert("Saved (CORS mode) or Error: " + e.message);
-                location.reload();
+                document.getElementById('leadModal').classList.add('hidden');
+                switchTab('form');
+                populateEditFormRes(lead, rawIdx + 2);
             }
-        };
 
-        // Photo Comp
-        document.getElementById('photoInput').onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.getElementById('compressor');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 400; canvas.height = 400;
-                    ctx.drawImage(img, 0, 0, 400, 400);
-                    photoData = canvas.toDataURL('image/jpeg', 0.6);
-                    alert("Photo processed!");
-                };
-                img.src = ev.target.result;
+            function populateEditFormRes(data, rowIdx) {
+                // Fill Form Logic similar to original
+                document.getElementById('rowIndex').value = rowIdx;
+
+                // Basic fields
+                document.getElementById('Name').value = data.Name || '';
+                let contact = data.Contact || '';
+                if (contact.startsWith('91') && contact.length === 12) contact = contact.substring(2);
+                document.getElementById('Contact').value = contact;
+                document.getElementById('City').value = data.City || 'Jhansi';
+                document.getElementById('Profession').value = data.Profession || 'Business';
+                document.getElementById('Status').value = data.Status || 'New';
+                document.getElementById('Note').value = data.Note || '';
+                document.getElementById('Budget').value = data.Budget || '';
+                document.getElementById('PropertyType').value = data.PropertyType || 'Plots';
+                document.getElementById('Email').value = data.Email || '';
+
+                // Projects (Multi)
+                const pArr = (data.Project || '').split(',').map(s => s.trim());
+                const pSel = document.getElementById('Project');
+                for (let opt of pSel.options) opt.selected = pArr.includes(opt.value);
+
+                document.getElementById('deleteZone').classList.remove('hidden');
+                document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-rotate mr-2"></i> Update Record`;
+            }
+
+            document.getElementById('leadForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('saveBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+                btn.disabled = true;
+
+                try {
+                    const formData = new FormData(e.target);
+                    const obj = Object.fromEntries(formData);
+                    if (obj.Contact.length === 10) obj.Contact = '91' + obj.Contact;
+
+                    // Photo
+                    if (photoData) obj.photo = photoData;
+                    obj.Timestamp = new Date().toLocaleString(); // Simple localized
+
+                    // Handle Multi Select
+                    const proj = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(', ');
+                    obj.Project = proj;
+
+                    // Send
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(obj)
+                    }); // Fire and forget mostly as CORS blocks response reading often
+
+                    alert("Saved Successfully");
+                    location.reload();
+                } catch (e) {
+                    alert("Saved (CORS mode) or Error: " + e.message);
+                    location.reload();
+                }
             };
-            reader.readAsDataURL(file);
-        };
 
-        function handleDelete() {
-            if (confirm("Delete this record?")) {
-                const idx = document.getElementById('rowIndex').value;
-                const pin = prompt("Enter PIN to confirm delete");
-                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin }) })
-                    .then(() => { alert("Deleted"); location.reload(); });
+            // Photo Comp
+            document.getElementById('photoInput').onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.getElementById('compressor');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = 400; canvas.height = 400;
+                        ctx.drawImage(img, 0, 0, 400, 400);
+                        photoData = canvas.toDataURL('image/jpeg', 0.6);
+                        alert("Photo processed!");
+                    };
+                    img.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
+            function handleDelete() {
+                if (confirm("Delete this record?")) {
+                    const idx = document.getElementById('rowIndex').value;
+                    const pin = prompt("Enter PIN to confirm delete");
+                    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin }) })
+                        .then(() => { alert("Deleted"); location.reload(); });
+                }
             }
-        }
 
-        function toggleOther(sel, targetId) {
-            const t = document.getElementById(targetId);
-            if (sel.value === 'Other') t.classList.remove('hidden');
-            else t.classList.add('hidden');
-        }
-
-        /* --- AI ASSISTANT LOGIC --- */
-        const msgContainer = document.getElementById('messagesContainer');
-        const msgInput = document.getElementById('messageInput');
-
-        document.getElementById('sendBtn').onclick = sendMessage;
-        msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-
-        async function sendMessage() {
-            const txt = msgInput.value.trim();
-            if (!txt) return;
-
-            // Add User Msg
-            addAiMessage(txt, 'user');
-            msgInput.value = '';
-
-            // Show Loading
-            document.getElementById('typingIndicator').classList.remove('hidden');
-            msgContainer.scrollTop = msgContainer.scrollHeight;
-
-            try {
-                const res = await fetch(N8N_WEBHOOK, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'sendMessage', sessionId: aiSessionId, chatInput: txt })
-                });
-                const data = await res.json();
-                const reply = data.output || data.response || data.message || "I didn't understand that.";
-
-                document.getElementById('typingIndicator').classList.add('hidden');
-                addAiMessage(reply, 'bot');
-            } catch (e) {
-                document.getElementById('typingIndicator').classList.add('hidden');
-                addAiMessage("Sorry, connection error.", 'bot');
+            function toggleOther(sel, targetId) {
+                const t = document.getElementById(targetId);
+                if (sel.value === 'Other') t.classList.remove('hidden');
+                else t.classList.add('hidden');
             }
-        }
 
-        function addAiMessage(text, sender) {
-            const div = document.createElement('div');
-            div.className = `ai-message ${sender} flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
-            div.innerHTML = `
+            /* --- AI ASSISTANT LOGIC --- */
+            const msgContainer = document.getElementById('messagesContainer');
+            const msgInput = document.getElementById('messageInput');
+
+            document.getElementById('sendBtn').onclick = sendMessage;
+            msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+            async function sendMessage() {
+                const txt = msgInput.value.trim();
+                if (!txt) return;
+
+                // Add User Msg
+                addAiMessage(txt, 'user');
+                msgInput.value = '';
+
+                // Show Loading
+                document.getElementById('typingIndicator').classList.remove('hidden');
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+
+                try {
+                    const res = await fetch(N8N_WEBHOOK, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'sendMessage', sessionId: aiSessionId, chatInput: txt })
+                    });
+                    const data = await res.json();
+                    const reply = data.output || data.response || data.message || "I didn't understand that.";
+
+                    document.getElementById('typingIndicator').classList.add('hidden');
+                    addAiMessage(reply, 'bot');
+                } catch (e) {
+                    document.getElementById('typingIndicator').classList.add('hidden');
+                    addAiMessage("Sorry, connection error.", 'bot');
+                }
+            }
+
+            function addAiMessage(text, sender) {
+                const div = document.createElement('div');
+                div.className = `ai-message ${sender} flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+                div.innerHTML = `
                 <div class="avatar w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0">
                     ${sender === 'bot' ? '🤖' : '👤'}
                 </div>
@@ -1104,58 +1303,58 @@
                     ${text}
                 </div>
             `;
-            // Remove welcome if exists
-            const welcome = msgContainer.querySelector('.initial-welcome');
-            if (welcome) welcome.remove();
+                // Remove welcome if exists
+                const welcome = msgContainer.querySelector('.initial-welcome');
+                if (welcome) welcome.remove();
 
-            msgContainer.appendChild(div);
-            msgContainer.scrollTo({ top: msgContainer.scrollHeight, behavior: 'smooth' });
-        }
+                msgContainer.appendChild(div);
+                msgContainer.scrollTo({ top: msgContainer.scrollHeight, behavior: 'smooth' });
+            }
 
-        function showNotification(body) {
-            if (Notification.permission === 'granted') new Notification('LeadPro', { body, icon: 'icon-192.png' });
-        }
+            function showNotification(body) {
+                if (Notification.permission === 'granted') new Notification('LeadPro', { body, icon: 'icon-192.png' });
+            }
 
 
-        /* --- HOME STATS & CHARTS --- */
-        let statusChart = null;
+            /* --- HOME STATS & CHARTS --- */
+            let statusChart = null;
 
-        function updateHomeStats() {
-            // Calculate Stats
-            const total = allLeads.length;
-            const hot = allLeads.filter(l => (l.Status || '').toLowerCase().includes('hot')).length;
-            const won = allLeads.filter(l => (l.Status || '').toLowerCase().includes('closed')).length;
+            function updateHomeStats() {
+                // Calculate Stats
+                const total = allLeads.length;
+                const hot = allLeads.filter(l => (l.Status || '').toLowerCase().includes('hot')).length;
+                const won = allLeads.filter(l => (l.Status || '').toLowerCase().includes('closed')).length;
 
-            document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-hot').innerText = hot;
-            document.getElementById('stat-won').innerText = won;
-            document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString();
+                document.getElementById('stat-total').innerText = total;
+                document.getElementById('stat-hot').innerText = hot;
+                document.getElementById('stat-won').innerText = won;
+                document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString();
 
-            // Stats Chart
-            const ctx = document.getElementById('statusChart').getContext('2d');
-            const counts = {};
-            allLeads.forEach(l => {
-                const s = l.Status || 'New';
-                counts[s] = (counts[s] || 0) + 1;
-            });
+                // Stats Chart
+                const ctx = document.getElementById('statusChart').getContext('2d');
+                const counts = {};
+                allLeads.forEach(l => {
+                    const s = l.Status || 'New';
+                    counts[s] = (counts[s] || 0) + 1;
+                });
 
-            if (statusChart) statusChart.destroy();
-            statusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(counts),
-                    datasets: [{
-                        data: Object.values(counts),
-                        backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#a855f7', '#64748b'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+                if (statusChart) statusChart.destroy();
+                statusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(counts),
+                        datasets: [{
+                            data: Object.values(counts),
+                            backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#a855f7', '#64748b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
 
-            // Recent Table
-            const tbody = document.getElementById('homeTableBody');
-            tbody.innerHTML = allLeads.slice(0, 5).map(l => `
+                // Recent Table
+                const tbody = document.getElementById('homeTableBody');
+                tbody.innerHTML = allLeads.slice(0, 5).map(l => `
                 <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
@@ -1167,17 +1366,17 @@
                     <td class="px-6 py-4 text-xs font-bold text-slate-400">${timeAgo(l.Timestamp)}</td>
                 </tr>
             `).join('');
-        }
+            }
 
-        /* --- PWA SERVICE WORKER --- */
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('SW Registered'))
-                    .catch(err => console.log('SW Fail:', err));
-            });
-        }
-    </script>
+            /* --- PWA SERVICE WORKER --- */
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(reg => console.log('SW Registered'))
+                        .catch(err => console.log('SW Fail:', err));
+                });
+            }
+        </script>
 </body>
 
 </html>
