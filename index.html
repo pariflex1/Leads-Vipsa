@@ -300,10 +300,7 @@
                     class="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-left text-sm font-medium text-red-500 hover:bg-red-50 transition">
                     <i class="fa-solid fa-power-off w-5"></i> Logout
                 </button>
-                <button onclick="registerPasskey()"
-                    class="mt-2 flex items-center gap-3 px-4 py-3 rounded-xl w-full text-left text-sm font-medium text-blue-600 hover:bg-blue-50 transition">
-                    <i class="fa-solid fa-fingerprint w-5"></i> Setup Biometric
-                </button>
+
             </div>
         </aside>
 
@@ -333,12 +330,7 @@
                         title="Refresh">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
-                    <!-- Biometric Setup for Mobile -->
-                    <button onclick="registerPasskey()"
-                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
-                        title="Setup Biometric">
-                        <i class="fa-solid fa-fingerprint"></i>
-                    </button>
+
                     <!-- Mobile Logout -->
                     <button onclick="confirmLogout()"
                         class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition">
@@ -525,6 +517,14 @@
 
                 <!-- VIEW 3: HOME (Stats & Analytics) -->
                 <div id="view-home" class="view-section hidden space-y-8">
+                    <!-- Project Assignments -->
+                    <div id="assignedProjectsContainer"
+                        class="bg-blue-50/50 p-4 rounded-[2rem] border border-blue-100 hidden">
+                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 px-2">Your
+                            Assigned Projects</p>
+                        <div id="projectBadges" class="flex flex-wrap gap-2"></div>
+                    </div>
+
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100">
@@ -643,320 +643,403 @@
             <i class="fa-solid fa-robot text-xl mb-1"></i>
             <span class="text-[10px] font-bold">Assistant</span>
         </button>
+    </div>
 
+    <!-- MODALS -->
+    <!-- Lead Detail Modal -->
+    <div id="leadModal"
+        class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        onclick="closeOnBackdrop(event)">
+        <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]"
+            id="modalContainer">
+            <div class="overflow-y-auto custom-scroll p-6 md:p-8" id="modalContent"></div>
+        </div>
+    </div>
 
-        <!-- MODALS -->
-        <!-- Lead Detail Modal -->
-        <div id="leadModal"
-            class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-            onclick="closeOnBackdrop(event)">
-            <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]"
-                id="modalContainer">
-                <div class="overflow-y-auto custom-scroll p-6 md:p-8" id="modalContent"></div>
+    <!-- Logout Confirm Modal -->
+    <div id="logoutModal"
+        class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs shadow-2xl text-center">
+            <div
+                class="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Log out?</h3>
+            <div class="flex gap-3 mt-6">
+                <button onclick="document.getElementById('logoutModal').classList.add('hidden')"
+                    class="flex-1 py-3 rounded-2xl border border-slate-200 font-bold text-slate-600">Cancel</button>
+                <button onclick="logout()"
+                    class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold shadow-lg shadow-red-200">Logout</button>
             </div>
         </div>
+    </div>
 
-        <!-- Logout Confirm Modal -->
-        <div id="logoutModal"
-            class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs shadow-2xl text-center">
-                <div
-                    class="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                    <i class="fa-solid fa-power-off"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-800 mb-2">Log out?</h3>
-                <div class="flex gap-3 mt-6">
-                    <button onclick="document.getElementById('logoutModal').classList.add('hidden')"
-                        class="flex-1 py-3 rounded-2xl border border-slate-200 font-bold text-slate-600">Cancel</button>
-                    <button onclick="logout()"
-                        class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold shadow-lg shadow-red-200">Logout</button>
-                </div>
-            </div>
-        </div>
+    <!-- SCRIPTS -->
+    <script>
+        /* --- CONSTANTS & STATE --- */
+        const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
+        const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+        const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
 
-        <!-- SCRIPTS -->
-        <script>
-            /* --- CONSTANTS & STATE --- */
-            const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
-            const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
-            const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
+        let allLeads = []; // Shared Global State
+        let currentTab = 'leads';
+        let rawLeads = [];
+        let userProjects = []; // Store projects assigned to current user
+        let displayedCount = 0;
+        const BATCH_SIZE = 100;
+        let checkInterval = null;
+        let lastLeadCount = 0;
+        let photoData = null; // For Form
+        let originalFormData = {}; // For Form Edit Mode
+        let aiSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(7);
 
-            let allLeads = []; // Shared Global State
-            let currentTab = 'leads';
-            let rawLeads = [];
-            let displayedCount = 0;
-            const BATCH_SIZE = 100;
-            let checkInterval = null;
-            let lastLeadCount = 0;
-            let photoData = null; // For Form
-            let originalFormData = {}; // For Form Edit Mode
-            let aiSessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(7);
-
-            /* --- INITIALIZATION --- */
-            window.onload = () => {
-                // Check Auth
-                if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('displayName')) {
-                    document.getElementById('passkeySection').classList.remove('hidden');
-                    enterApp(localStorage.getItem('displayName'));
-                } else if (localStorage.getItem('wasLoggedIn') === 'true') {
-                    document.getElementById('passkeySection').classList.remove('hidden');
-                }
-
-                // Setup Form Defaults
-                const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
-                document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
-            };
-
-            /* --- NAVIGATION --- */
-            function switchTab(tabId) {
-                currentTab = tabId;
-
-                // 1. Hide all views
-                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-
-                // 2. Show target view
-                const targetView = document.getElementById(`view-${tabId}`);
-                if (targetView) targetView.classList.remove('hidden');
-
-                // 3. Update Sidebar (Desktop)
-                document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-                const deskTab = document.getElementById(`desk-tab-${tabId}`);
-                if (deskTab) deskTab.classList.add('active');
-
-                // 4. Update Bottom Nav (Mobile)
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-blue-600'));
-                // Center button special case handled by CSS primarily, but logic remains
-                const mobileBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`) || document.querySelector(`button[data-tab="${tabId}"]`);
-                if (mobileBtn && !mobileBtn.classList.contains('home-btn-mobile')) {
-                    mobileBtn.classList.add('active', 'text-blue-600');
-                }
-
-                // 5. Context Actions
-                if (tabId === 'leads' && allLeads.length === 0) loadLeads();
-                if (tabId === 'form') { initializeFormProjects(); }
-                if (tabId === 'home') updateHomeStats();
-
-                // Scroll top
-                document.getElementById('content-area').scrollTo(0, 0);
+        /* --- INITIALIZATION --- */
+        window.onload = () => {
+            // Check Auth
+            if (localStorage.getItem('isAuth') === 'true' && localStorage.getItem('displayName')) {
+                document.getElementById('passkeySection').classList.remove('hidden');
+                enterApp(localStorage.getItem('displayName'));
+            } else if (localStorage.getItem('wasLoggedIn') === 'true') {
+                document.getElementById('passkeySection').classList.remove('hidden');
             }
 
-            /* --- AUTHENTICATION --- */
-            async function loginWithPin() {
-                const u = document.getElementById('userInp').value.trim();
-                const p = document.getElementById('pinInp').value.trim();
-                if (!u || !p) return alert("Enter Username and PIN");
-                const btn = document.getElementById('loginBtn');
-                btn.innerText = "Checking...";
-                try {
-                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:D?key=${API_KEY}`;
-                    const res = await fetch(url).then(r => r.json());
-                    const match = (res.values || []).find(r => String(r[0]).trim() === u && String(r[1]).trim() === p);
+            // Setup Form Defaults
+            const d = new Date(); d.setDate(d.getDate() + 3); d.setHours(10, 0, 0, 0);
+            document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
+        };
+
+        /* --- NAVIGATION --- */
+        function switchTab(tabId) {
+            currentTab = tabId;
+
+            // 1. Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+
+            // 2. Show target view
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            // 3. Update Sidebar (Desktop)
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+            const deskTab = document.getElementById(`desk-tab-${tabId}`);
+            if (deskTab) deskTab.classList.add('active');
+
+            // 4. Update Bottom Nav (Mobile)
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-blue-600'));
+            // Center button special case handled by CSS primarily, but logic remains
+            const mobileBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`) || document.querySelector(`button[data-tab="${tabId}"]`);
+            if (mobileBtn && !mobileBtn.classList.contains('home-btn-mobile')) {
+                mobileBtn.classList.add('active', 'text-blue-600');
+            }
+
+            // 5. Context Actions
+            if (tabId === 'leads' && allLeads.length === 0) loadLeads();
+            if (tabId === 'form') { initializeFormProjects(); }
+            if (tabId === 'home') updateHomeStats();
+
+            // Scroll top
+            document.getElementById('content-area').scrollTo(0, 0);
+        }
+
+        /* --- AUTHENTICATION --- */
+        async function loginWithPin() {
+            const u = document.getElementById('userInp').value.trim();
+            const p = document.getElementById('pinInp').value.trim();
+            if (!u || !p) return alert("Enter Username and PIN");
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = "Checking...";
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:F?key=${API_KEY}`;
+                const res = await fetch(url).then(r => r.json());
+                const match = (res.values || []).find(r => String(r[0]).trim() === u && String(r[1]).trim() === p);
+                if (match) {
+                    localStorage.setItem('isAuth', 'true');
+                    localStorage.setItem('displayName', match[2]);
+                    localStorage.setItem('userContact', match[3] || ''); // Column D is mobile
+                    localStorage.setItem('userRole', (match[5] || 'User').trim()); // Column F is index 5 (Role)
+                    localStorage.setItem('wasLoggedIn', 'true');
+                    localStorage.setItem('lastUserAttempt', u);
+                    enterApp(match[2]);
+                } else { alert("Invalid inputs"); btn.innerText = "Verify PIN"; }
+            } catch (e) { alert("Login Error"); btn.innerText = "Verify PIN"; }
+        }
+
+        async function loginWithPasskey() {
+            const username = document.getElementById('userInp').value.trim();
+            if (!username) return alert("Please enter your Username first to use Passkey");
+
+            const btn = document.querySelector('button[onclick="loginWithPasskey()"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...';
+
+            try {
+                // 1. Get stored credential from backend
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'get_passkey_data', username: username })
+                }).then(r => r.json());
+
+                if (res.status !== 'success') {
+                    throw new Error("No passkey found for this user. Please login with PIN and set it up first.");
+                }
+
+                const storedCredential = JSON.parse(res.credential);
+
+                // 2. Prepare WebAuthn options
+                const getOptions = {
+                    publicKey: {
+                        challenge: crypto.getRandomValues(new Uint8Array(32)),
+                        allowCredentials: [{
+                            id: base64ToBuffer(storedCredential.id),
+                            type: 'public-key',
+                            transports: ['internal']
+                        }],
+                        userVerification: 'required',
+                        timeout: 60000
+                    }
+                };
+
+                const assertion = await navigator.credentials.get(getOptions);
+
+                // 3. Simple verification (In real prod, signature is verified on server)
+                if (assertion) {
+                    const nameRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:F?key=${API_KEY}`).then(r => r.json());
+                    const match = (nameRes.values || []).find(r => String(r[0]).trim() === username);
+
                     if (match) {
                         localStorage.setItem('isAuth', 'true');
                         localStorage.setItem('displayName', match[2]);
+                        localStorage.setItem('userContact', match[3] || ''); // Column D is mobile
+                        localStorage.setItem('userRole', (match[5] || 'User').trim()); // Column F is role
                         localStorage.setItem('wasLoggedIn', 'true');
-                        localStorage.setItem('lastUserAttempt', u); // Store for passkey registration context
                         enterApp(match[2]);
-                    } else { alert("Invalid inputs"); btn.innerText = "Verify PIN"; }
-                } catch (e) { alert("Login Error"); btn.innerText = "Verify PIN"; }
+                    }
+                }
+            } catch (e) {
+                alert("Passkey Login Failed: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-face-smile text-blue-500"></i> Use Passkey';
             }
+        }
 
-            async function loginWithPasskey() {
-                const username = document.getElementById('userInp').value.trim();
-                if (!username) return alert("Please enter your Username first to use Passkey");
+        async function registerPasskey() {
+            const username = localStorage.getItem('lastUserAttempt') || document.getElementById('UserName').value;
+            if (!username) return alert("User session not found. Please log in first.");
 
-                const btn = document.querySelector('button[onclick="loginWithPasskey()"]');
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...';
+            if (!confirm("Add this device for Fingerprint/Face ID login?")) return;
 
-                try {
-                    // 1. Get stored credential from backend
+            try {
+                const publicKeyCredentialCreationOptions = {
+                    challenge: crypto.getRandomValues(new Uint8Array(32)),
+                    rp: { name: "Lead Pro", id: window.location.hostname || "localhost" },
+                    user: {
+                        id: Uint8Array.from(username, c => c.charCodeAt(0)),
+                        name: username,
+                        displayName: username
+                    },
+                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                    authenticatorSelection: { userVerification: "required" },
+                    timeout: 60000
+                };
+
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                if (credential) {
+                    const credObject = {
+                        id: bufferToBase64(credential.rawId),
+                        type: credential.type
+                    };
+
                     const res = await fetch(SCRIPT_URL, {
                         method: 'POST',
-                        body: JSON.stringify({ action: 'get_passkey_data', username: username })
+                        body: JSON.stringify({
+                            action: 'register_passkey',
+                            username: username,
+                            credential: JSON.stringify(credObject)
+                        })
                     }).then(r => r.json());
 
-                    if (res.status !== 'success') {
-                        throw new Error("No passkey found for this user. Please login with PIN and set it up first.");
+                    if (res.status === 'success') {
+                        localStorage.setItem('passkeyRegistered', 'true');
+                        const toast = document.getElementById('passkeyToast');
+                        if (toast) toast.remove();
+                        alert("Passkey registered successfully! You can now use biometrics to login.");
+                    } else {
+                        throw new Error(res.message);
                     }
+                }
+            } catch (e) {
+                alert("Registration Failed: " + (e.name === 'NotAllowedError' ? "Cancelled by user" : e.message));
+            }
+        }
 
-                    const storedCredential = JSON.parse(res.credential);
+        // WebAuthn Helpers
+        function bufferToBase64(buffer) {
+            return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        }
+        function base64ToBuffer(base64) {
+            const binary = atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
+            return Uint8Array.from(binary, c => c.charCodeAt(0)).buffer;
+        }
 
-                    // 2. Prepare WebAuthn options
-                    const getOptions = {
-                        publicKey: {
-                            challenge: Uint8Array.from(atob("CHALLENGE_STRING_BASE64"), c => c.charCodeAt(0)), // In real prod, this comes from server
-                            allowCredentials: [{
-                                id: base64ToBuffer(storedCredential.id),
-                                type: 'public-key',
-                                transports: ['internal']
-                            }],
-                            userVerification: 'required',
-                            timeout: 60000
-                        }
-                    };
+        function enterApp(name) {
+            document.getElementById('authScreen').classList.add('hidden');
+            const app = document.getElementById('mainApp');
+            app.classList.remove('hidden');
+            document.getElementById('bottomNav').classList.remove('translate-y-full'); // Slide up nav
+            setTimeout(() => app.classList.add('opacity-100'), 50);
 
-                    const assertion = await navigator.credentials.get(getOptions);
+            // Set User Info for Form
+            document.getElementById('UserName').value = name;
+            document.getElementById('UserContact').value = localStorage.getItem('userContact') || '';
 
-                    // 3. Simple verification (In real prod, signature is verified on server)
-                    if (assertion) {
-                        // For this simple demo/implementation, if the device produces an assertion, we trust it
-                        // since we are using Google Sheets as a lightweight backend.
-                        const nameRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:C?key=${API_KEY}`).then(r => r.json());
-                        const match = (nameRes.values || []).find(r => String(r[0]).trim() === username);
+            loadLeads(); // Load data
+            // Start Polling
+            checkInterval = setInterval(checkForUpdates, 30000);
 
-                        if (match) {
-                            localStorage.setItem('isAuth', 'true');
-                            localStorage.setItem('displayName', match[2]);
-                            localStorage.setItem('wasLoggedIn', 'true');
-                            enterApp(match[2]);
-                        }
+            // Default Tab
+            switchTab('leads');
+
+            // Check if passkey setup is needed
+            setTimeout(checkPasskeySetup, 2000);
+        }
+
+        function checkPasskeySetup() {
+            if (localStorage.getItem('passkeyRegistered') !== 'true') {
+                const toast = document.createElement('div');
+                toast.id = 'passkeyToast';
+                toast.className = 'fixed bottom-24 left-4 right-4 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl z-[100] flex items-center justify-between border border-slate-700 animate-bounce';
+                toast.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-fingerprint text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-black uppercase tracking-wider text-blue-400">Security Update</p>
+                                <p class="text-xs font-bold">Enable Passkey Login?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="this.parentElement.parentElement.remove()" class="text-slate-400 px-2 py-2 text-[10px] font-bold">Later</button>
+                            <button onclick="registerPasskey()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-blue-900/50">Setup</button>
+                        </div>
+                    `;
+                document.body.appendChild(toast);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isAuth');
+            localStorage.removeItem('displayName');
+            localStorage.removeItem('userContact');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('lastUserAttempt');
+            // We keep wasLoggedIn and passkeyRegistered to allow easier subsequent logins
+            location.reload();
+        }
+        function confirmLogout() {
+            document.getElementById('logoutModal').classList.remove('hidden');
+        }
+
+        /* --- LEADS LOGIC --- */
+        async function loadLeads() {
+            const loader = document.getElementById('loader');
+            loader.classList.remove('hidden');
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`;
+                const res = await fetch(url).then(r => r.json());
+                const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUpDateTime', 'UserName', 'UserContact', 'ClientImageUrl'];
+
+                rawLeads = (res.values || []).map(row => {
+                    let obj = {};
+                    headers.forEach((h, i) => obj[h] = row[i] || '');
+                    return obj;
+                });
+
+                // 1. Fetch Projects & User Details in parallel for speed
+                const [projRes, usersRes] = await Promise.all([
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:C?key=${API_KEY}`).then(r => r.json()),
+                    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Users!A2:F?key=${API_KEY}`).then(r => r.json())
+                ]);
+
+                const currentDisplayName = localStorage.getItem('displayName');
+                let currentUserRole = localStorage.getItem('userRole');
+
+                // If role is missing (e.g. session from before update), find it now
+                if (!currentUserRole && usersRes.values) {
+                    const match = usersRes.values.find(u => u[2] === currentDisplayName);
+                    if (match) {
+                        currentUserRole = (match[5] || 'User').trim();
+                        localStorage.setItem('userRole', currentUserRole);
                     }
-                } catch (e) {
-                    alert("Passkey Login Failed: " + e.message);
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-face-smile text-blue-500"></i> Use Passkey';
                 }
+                if (!currentUserRole) currentUserRole = 'User';
+
+                // 2. Identify User's Projects (Based on Name or Role in AssignTo column)
+                userProjects = (projRes.values || [])
+                    .filter(p => {
+                        const assignTo = String(p[2] || '').toLowerCase();
+                        const name = currentDisplayName.toLowerCase();
+                        const role = currentUserRole.toLowerCase();
+                        const assignList = assignTo.split(',').map(s => s.trim());
+                        return assignList.includes(name) || assignList.includes(role);
+                    })
+                    .map(p => p[0]);
+
+                // 3. Filter Leads by Project Assignment (Now applies to everyone, including Admins)
+                let filteredLeads = rawLeads.filter(lead => {
+                    const leadProjs = (lead.Project || '').split(',').map(s => s.trim());
+                    const isAssignedProject = leadProjs.some(lp => userProjects.includes(lp));
+                    const isOwner = String(lead.UserName || '').toLowerCase() === currentDisplayName.toLowerCase();
+                    return isAssignedProject || isOwner;
+                });
+
+                if (lastLeadCount === 0) lastLeadCount = filteredLeads.length;
+
+                // Sort Newest First
+                allLeads = [...filteredLeads].reverse();
+
+                renderNextBatch(true);
+
+                // Refresh home stats if we are on the home tab or just generally to keep sync
+                if (currentTab === 'home') updateHomeStats();
+            } catch (e) { console.error(e); }
+            loader.classList.add('hidden');
+        }
+
+        function renderNextBatch(reset = false) {
+            const grid = document.getElementById('leadGrid');
+            const loadBtnContainer = document.getElementById('loadMoreContainer');
+
+            if (reset) { grid.innerHTML = ''; displayedCount = 0; }
+
+            if (allLeads.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                loadBtnContainer.classList.add('hidden');
+                return;
+            }
+            document.getElementById('emptyState').classList.add('hidden');
+
+            const batch = allLeads.slice(displayedCount, displayedCount + BATCH_SIZE);
+            if (batch.length === 0) {
+                loadBtnContainer.classList.add('hidden');
+                return;
             }
 
-            async function registerPasskey() {
-                const username = localStorage.getItem('lastUserAttempt') || document.getElementById('UserName').value;
-                if (!username) return alert("User session not found. Please log in first.");
+            const html = batch.map((lead, index) => {
+                const globalIndex = displayedCount + index;
+                const statusColor = getStatusColor(lead.Status);
+                const imgUrl = getProxiedImageUrl(lead.ClientImageUrl, lead.Name);
 
-                if (!confirm("Add this device for Fingerprint/Face ID login?")) return;
+                // Derived Colors for Status Badge
+                const badgeBg = statusColor.replace('bg-', 'bg-').replace('500', '50');
+                const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
 
-                try {
-                    const publicKeyCredentialCreationOptions = {
-                        challenge: Uint8Array.from(atob("CHALLENGE_STRING_BASE64"), c => c.charCodeAt(0)),
-                        rp: { name: "Lead Pro", id: window.location.hostname || "localhost" },
-                        user: {
-                            id: Uint8Array.from(username, c => c.charCodeAt(0)),
-                            name: username,
-                            displayName: username
-                        },
-                        pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-                        authenticatorSelection: { userVerification: "required" },
-                        timeout: 60000
-                    };
-
-                    const credential = await navigator.credentials.create({
-                        publicKey: publicKeyCredentialCreationOptions
-                    });
-
-                    if (credential) {
-                        const credObject = {
-                            id: bufferToBase64(credential.rawId),
-                            type: credential.type
-                        };
-
-                        const res = await fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                action: 'register_passkey',
-                                username: username,
-                                credential: JSON.stringify(credObject)
-                            })
-                        }).then(r => r.json());
-
-                        if (res.status === 'success') {
-                            alert("Passkey registered successfully! You can now use biometrics to login.");
-                        } else {
-                            throw new Error(res.message);
-                        }
-                    }
-                } catch (e) {
-                    alert("Registration Failed: " + (e.name === 'NotAllowedError' ? "Cancelled by user" : e.message));
-                }
-            }
-
-            // WebAuthn Helpers
-            function bufferToBase64(buffer) {
-                return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-            }
-            function base64ToBuffer(base64) {
-                return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
-            }
-
-            function enterApp(name) {
-                document.getElementById('authScreen').classList.add('hidden');
-                const app = document.getElementById('mainApp');
-                app.classList.remove('hidden');
-                document.getElementById('bottomNav').classList.remove('translate-y-full'); // Slide up nav
-                setTimeout(() => app.classList.add('opacity-100'), 50);
-
-                // Set User Info for Form
-                document.getElementById('UserName').value = name;
-
-                loadLeads(); // Load data
-                // Start Polling
-                checkInterval = setInterval(checkForUpdates, 30000);
-
-                // Default Tab
-                switchTab('leads');
-            }
-
-            function logout() {
-                localStorage.removeItem('isAuth');
-                location.reload();
-            }
-            function confirmLogout() { document.getElementById('logoutModal').classList.remove('hidden'); }
-
-            /* --- LEADS LOGIC --- */
-            async function loadLeads() {
-                const loader = document.getElementById('loader');
-                loader.classList.remove('hidden');
-                try {
-                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`;
-                    const res = await fetch(url).then(r => r.json());
-                    const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUp', 'User', 'UContact', 'ClientImageUrl'];
-
-                    rawLeads = (res.values || []).map(row => {
-                        let obj = {};
-                        headers.forEach((h, i) => obj[h] = row[i] || '');
-                        return obj;
-                    });
-
-                    if (lastLeadCount === 0) lastLeadCount = rawLeads.length;
-
-                    // Sort Newest First
-                    allLeads = [...rawLeads].reverse();
-
-                    renderNextBatch(true);
-                } catch (e) { console.error(e); }
-                loader.classList.add('hidden');
-            }
-
-            function renderNextBatch(reset = false) {
-                const grid = document.getElementById('leadGrid');
-                const loadBtnContainer = document.getElementById('loadMoreContainer');
-
-                if (reset) { grid.innerHTML = ''; displayedCount = 0; }
-
-                if (allLeads.length === 0) {
-                    document.getElementById('emptyState').classList.remove('hidden');
-                    loadBtnContainer.classList.add('hidden');
-                    return;
-                }
-                document.getElementById('emptyState').classList.add('hidden');
-
-                const batch = allLeads.slice(displayedCount, displayedCount + BATCH_SIZE);
-                if (batch.length === 0) {
-                    loadBtnContainer.classList.add('hidden');
-                    return;
-                }
-
-                const html = batch.map((lead, index) => {
-                    const globalIndex = displayedCount + index;
-                    const statusColor = getStatusColor(lead.Status);
-                    const imgUrl = getProxiedImageUrl(lead.ClientImageUrl, lead.Name);
-
-                    // Derived Colors for Status Badge
-                    const badgeBg = statusColor.replace('bg-', 'bg-').replace('500', '50');
-                    const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
-
-                    return `
+                return `
                 <div onclick="openLeadModal(${globalIndex})" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all cursor-pointer flex items-center gap-3 md:gap-4 group">
                     <!-- Avatar -->
                     <div class="relative shrink-0">
@@ -985,84 +1068,96 @@
                         </div>
                     </div>
                 </div>`;
-                }).join('');
+            }).join('');
 
-                grid.insertAdjacentHTML('beforeend', html);
-                displayedCount += batch.length;
+            grid.insertAdjacentHTML('beforeend', html);
+            displayedCount += batch.length;
 
-                // Toggle Load More Button
-                if (displayedCount >= allLeads.length) loadBtnContainer.classList.add('hidden');
-                else loadBtnContainer.classList.remove('hidden');
-            }
+            // Toggle Load More Button
+            if (displayedCount >= allLeads.length) loadBtnContainer.classList.add('hidden');
+            else loadBtnContainer.classList.remove('hidden');
+        }
 
-            async function checkForUpdates() {
-                try {
-                    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:A?key=${API_KEY}`; // Lightweight check
-                    const res = await fetch(url).then(r => r.json());
-                    const count = (res.values || []).length;
-                    if (count > lastLeadCount) {
-                        showNotification(`${count - lastLeadCount} New Leads!`);
-                        loadLeads();
-                    }
-                    lastLeadCount = count;
-                } catch (e) { }
-            }
-
-            /* --- HELPER UTILS --- */
-            function getProxiedImageUrl(url, name) {
-                if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
-                let cleanUrl = String(url).trim();
-                const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z]+)/);
-                if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
-                return cleanUrl;
-            }
-
-            function getStatusColor(s) {
-                s = String(s).toLowerCase();
-                if (s.includes('hot')) return 'bg-red-500';
-                if (s.includes('closed') || s.includes('won')) return 'bg-green-500';
-                if (s.includes('visit')) return 'bg-purple-500';
-                return 'bg-blue-500';
-            }
-
-            function timeAgo(dateString) {
-                if (!dateString) return '';
-
-                // Custom parsing for DD/MM/YYYY HH:MM
-                let date;
-                const parts = String(dateString).trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})/);
-                if (parts) {
-                    // parts: [full, day, month, year, hour, minute]
-                    // months are 0-indexed in JS Date
-                    date = new Date(parts[3], parts[2] - 1, parts[1], parts[4], parts[5]);
-                } else {
-                    date = new Date(dateString.trim());
+        async function checkForUpdates() {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:A?key=${API_KEY}`; // Lightweight check
+                const res = await fetch(url).then(r => r.json());
+                const count = (res.values || []).length;
+                if (count > lastLeadCount) {
+                    showNotification(`${count - lastLeadCount} New Leads!`);
+                    loadLeads();
                 }
+                lastLeadCount = count;
+            } catch (e) { }
+        }
 
-                if (isNaN(date.getTime())) return '';
-                const seconds = Math.floor((new Date() - date) / 1000);
-                if (seconds < 60) return 'Just now';
-                const minutes = Math.floor(seconds / 60);
-                if (minutes < 60) return `${minutes}m ago`;
-                const hours = Math.floor(minutes / 60);
-                if (hours < 24) return `${hours}h ago`;
-                return Math.floor(hours / 24) + 'd ago';
+        /* --- HELPER UTILS --- */
+        function formatTimestamp(date = new Date()) {
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
+        function getProxiedImageUrl(url, name) {
+            if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
+            let cleanUrl = String(url).trim();
+
+            // Check if it's a Drive URL
+            const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z_]+)/);
+            if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
+
+            // Check if it's just a Drive ID (alphanumeric, underscores, hyphens, 25-45 chars)
+            if (/^[a-zA-Z0-9_-]{25,45}$/.test(cleanUrl)) return `https://drive.google.com/thumbnail?id=${cleanUrl}&sz=w500`;
+
+            // Fallback for direct links
+            return cleanUrl;
+        }
+
+        function getStatusColor(s) {
+            s = String(s).toLowerCase();
+            if (s.includes('hot')) return 'bg-red-500';
+            if (s.includes('closed') || s.includes('won')) return 'bg-green-500';
+            if (s.includes('visit')) return 'bg-purple-500';
+            return 'bg-blue-500';
+        }
+
+        function timeAgo(dateString) {
+            if (!dateString) return '';
+
+            // Custom parsing for DD/MM/YYYY HH:MM
+            let date;
+            const parts = String(dateString).trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})/);
+            if (parts) {
+                // parts: [full, day, month, year, hour, minute]
+                // months are 0-indexed in JS Date
+                date = new Date(parts[3], parts[2] - 1, parts[1], parts[4], parts[5]);
+            } else {
+                date = new Date(dateString.trim());
             }
 
-            function handleSearch() {
-                const term = document.getElementById('searchInput').value.toLowerCase().trim();
-                const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
-                allLeads = filtered;
-                renderNextBatch(true);
-            }
+            if (isNaN(date.getTime())) return '';
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            return Math.floor(hours / 24) + 'd ago';
+        }
 
-            /* --- LEAD MODAL --- */
-            function openLeadModal(index) {
-                const lead = allLeads[index]; // Note: This uses the currently sorted/filtered list
-                const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
-                const modalContent = document.getElementById('modalContent');
+        function handleSearch() {
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
+            allLeads = filtered;
+            renderNextBatch(true);
+        }
 
-                modalContent.innerHTML = `
+        /* --- LEAD MODAL --- */
+        function openLeadModal(index) {
+            const lead = allLeads[index]; // Note: This uses the currently sorted/filtered list
+            const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
+            const modalContent = document.getElementById('modalContent');
+
+            modalContent.innerHTML = `
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex items-center gap-4">
                         <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" class="w-16 h-16 rounded-2xl object-cover shadow-lg ring-4 ring-white">
@@ -1111,191 +1206,218 @@
                     </a>
                 </div>
             `;
-                document.getElementById('leadModal').classList.remove('hidden');
+            document.getElementById('leadModal').classList.remove('hidden');
+        }
+
+        function closeOnBackdrop(e) { if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); }
+
+        /* --- FORM & EDIT LOGIC --- */
+        async function initializeFormProjects() {
+            if (document.getElementById('Project').options.length > 0) return;
+            try {
+                const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:C?key=${API_KEY}`).then(r => r.json());
+                const currentDisplayName = localStorage.getItem('displayName').toLowerCase();
+                const currentRole = (localStorage.getItem('userRole') || 'User').toLowerCase();
+                const sel = document.getElementById('Project');
+
+                (res.values || []).forEach(p => {
+                    const projName = p[0];
+                    const assignTo = String(p[2] || '').toLowerCase();
+                    const assignList = assignTo.split(',').map(s => s.trim());
+                    const isAssigned = assignList.includes(currentDisplayName) || assignList.includes(currentRole);
+
+                    if (isAssigned) {
+                        const opt = new Option(projName, projName);
+                        sel.add(opt);
+                    }
+                });
+            } catch (e) { }
+        }
+
+        function autoSearch(val) {
+            if (val.length === 10) {
+                const match = rawLeads.find(r => r.Contact && (r.Contact === val || r.Contact === '91' + val));
+                const msg = document.getElementById('statusMsg');
+                if (match) {
+                    msg.className = 'text-[10px] mt-2 font-bold italic text-blue-500';
+                    msg.textContent = 'Existing record found. Switching to edit mode.';
+                    const idx = rawLeads.indexOf(match); // Need raw index, but wait, we need row index from logic
+                    // Actually, we can just fill form. RowIndex calc relies on total count or explicit ID if we had one.
+                    // Simple hack used in original: index in array + 2.
+                    populateEditForm(allLeads.indexOf(match), true); // THIS IS RISKY if filtered. Should find in rawLeads.
+                    // Let's use rawLeads index
+                    const rawIdx = rawLeads.indexOf(match);
+                    populateEditFormRes(match, rawIdx + 2);
+                } else {
+                    msg.className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
+                    msg.textContent = 'New number available.';
+                    document.getElementById('rowIndex').value = '';
+                    document.getElementById('deleteZone').classList.add('hidden');
+                }
             }
+        }
 
-            function closeOnBackdrop(e) { if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); }
+        function populateEditForm(listIndex) {
+            // Called from Modal Edit Button
+            const lead = allLeads[listIndex];
+            // Find original index in rawLeads to set rowIndex correctly
+            const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name); // Simple composite key match
+            if (rawIdx === -1) return alert("Error locating record");
 
-            /* --- FORM & EDIT LOGIC --- */
-            async function initializeFormProjects() {
-                if (document.getElementById('Project').options.length > 0) return;
-                try {
-                    const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Projects!A2:A?key=${API_KEY}`).then(r => r.json());
-                    const sel = document.getElementById('Project');
-                    (res.values || []).forEach(p => sel.add(new Option(p[0], p[0])));
-                } catch (e) { }
-            }
+            document.getElementById('leadModal').classList.add('hidden');
+            switchTab('form');
+            populateEditFormRes(lead, rawIdx + 2);
+        }
 
-            function autoSearch(val) {
-                if (val.length === 10) {
-                    const match = rawLeads.find(r => r.Contact && (r.Contact === val || r.Contact === '91' + val));
-                    const msg = document.getElementById('statusMsg');
-                    if (match) {
-                        msg.className = 'text-[10px] mt-2 font-bold italic text-blue-500';
-                        msg.textContent = 'Existing record found. Switching to edit mode.';
-                        const idx = rawLeads.indexOf(match); // Need raw index, but wait, we need row index from logic
-                        // Actually, we can just fill form. RowIndex calc relies on total count or explicit ID if we had one.
-                        // Simple hack used in original: index in array + 2.
-                        populateEditForm(allLeads.indexOf(match), true); // THIS IS RISKY if filtered. Should find in rawLeads.
-                        // Let's use rawLeads index
-                        const rawIdx = rawLeads.indexOf(match);
-                        populateEditFormRes(match, rawIdx + 2);
-                    } else {
-                        msg.className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
-                        msg.textContent = 'New number available.';
-                        document.getElementById('rowIndex').value = '';
-                        document.getElementById('deleteZone').classList.add('hidden');
+        function populateEditFormRes(data, rowIdx) {
+            // Fill Form Logic
+            document.getElementById('rowIndex').value = rowIdx;
+            document.getElementById('existingImg').value = data.ClientImageUrl || ''; // Preserve existing image URL
+
+            // Basic fields
+            document.getElementById('Name').value = data.Name || '';
+            let contact = data.Contact || '';
+            if (contact.startsWith('91') && contact.length === 12) contact = contact.substring(2);
+            document.getElementById('Contact').value = contact;
+            document.getElementById('City').value = data.City || 'Jhansi';
+            document.getElementById('Profession').value = data.Profession || 'Business';
+            document.getElementById('Status').value = data.Status || 'New';
+            document.getElementById('Note').value = data.Note || '';
+            document.getElementById('Budget').value = data.Budget || '';
+            document.getElementById('PropertyType').value = data.PropertyType || 'Plots';
+            document.getElementById('Email').value = data.Email || '';
+
+            // Projects (Multi)
+            const pArr = (data.Project || '').split(',').map(s => s.trim());
+            const pSel = document.getElementById('Project');
+            for (let opt of pSel.options) opt.selected = pArr.includes(opt.value);
+
+            document.getElementById('deleteZone').classList.remove('hidden');
+            document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-rotate mr-2"></i> Update Record`;
+        }
+
+        document.getElementById('leadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+                const obj = Object.fromEntries(formData);
+                if (obj.Contact.length === 10) obj.Contact = '91' + obj.Contact;
+
+                // Photo Handling: Only send new data if uploaded, otherwise preserve existing
+                if (photoData) {
+                    obj.photo = photoData;
+                } else if (obj.existingImg) {
+                    obj.ClientImageUrl = obj.existingImg;
+                }
+
+                obj.Timestamp = formatTimestamp(); // Entry timestamp
+
+                // Format FollowUpDateTime for spreadsheet if it exists
+                if (obj.FollowUpDateTime) {
+                    const fud = new Date(obj.FollowUpDateTime);
+                    if (!isNaN(fud)) {
+                        obj.FollowUpDateTime = formatTimestamp(fud);
                     }
                 }
+
+                // Handle Multi Select
+                const proj = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(', ');
+                obj.Project = proj;
+
+                // Send
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(obj)
+                }); // Fire and forget mostly as CORS blocks response reading often
+
+                alert("Saved Successfully");
+                location.reload();
+            } catch (e) {
+                alert("Saved (CORS mode) or Error: " + e.message);
+                location.reload();
             }
+        };
 
-            function populateEditForm(listIndex) {
-                // Called from Modal Edit Button
-                const lead = allLeads[listIndex];
-                // Find original index in rawLeads to set rowIndex correctly
-                const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name); // Simple composite key match
-                if (rawIdx === -1) return alert("Error locating record");
-
-                document.getElementById('leadModal').classList.add('hidden');
-                switchTab('form');
-                populateEditFormRes(lead, rawIdx + 2);
-            }
-
-            function populateEditFormRes(data, rowIdx) {
-                // Fill Form Logic similar to original
-                document.getElementById('rowIndex').value = rowIdx;
-
-                // Basic fields
-                document.getElementById('Name').value = data.Name || '';
-                let contact = data.Contact || '';
-                if (contact.startsWith('91') && contact.length === 12) contact = contact.substring(2);
-                document.getElementById('Contact').value = contact;
-                document.getElementById('City').value = data.City || 'Jhansi';
-                document.getElementById('Profession').value = data.Profession || 'Business';
-                document.getElementById('Status').value = data.Status || 'New';
-                document.getElementById('Note').value = data.Note || '';
-                document.getElementById('Budget').value = data.Budget || '';
-                document.getElementById('PropertyType').value = data.PropertyType || 'Plots';
-                document.getElementById('Email').value = data.Email || '';
-
-                // Projects (Multi)
-                const pArr = (data.Project || '').split(',').map(s => s.trim());
-                const pSel = document.getElementById('Project');
-                for (let opt of pSel.options) opt.selected = pArr.includes(opt.value);
-
-                document.getElementById('deleteZone').classList.remove('hidden');
-                document.getElementById('saveBtn').innerHTML = `<i class="fa-solid fa-rotate mr-2"></i> Update Record`;
-            }
-
-            document.getElementById('leadForm').onsubmit = async (e) => {
-                e.preventDefault();
-                const btn = document.getElementById('saveBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
-                btn.disabled = true;
-
-                try {
-                    const formData = new FormData(e.target);
-                    const obj = Object.fromEntries(formData);
-                    if (obj.Contact.length === 10) obj.Contact = '91' + obj.Contact;
-
-                    // Photo
-                    if (photoData) obj.photo = photoData;
-                    obj.Timestamp = new Date().toLocaleString(); // Simple localized
-
-                    // Handle Multi Select
-                    const proj = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(', ');
-                    obj.Project = proj;
-
-                    // Send
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(obj)
-                    }); // Fire and forget mostly as CORS blocks response reading often
-
-                    alert("Saved Successfully");
-                    location.reload();
-                } catch (e) {
-                    alert("Saved (CORS mode) or Error: " + e.message);
-                    location.reload();
-                }
-            };
-
-            // Photo Comp
-            document.getElementById('photoInput').onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.getElementById('compressor');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = 400; canvas.height = 400;
-                        ctx.drawImage(img, 0, 0, 400, 400);
-                        photoData = canvas.toDataURL('image/jpeg', 0.6);
-                        alert("Photo processed!");
-                    };
-                    img.src = ev.target.result;
+        // Photo Comp
+        document.getElementById('photoInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.getElementById('compressor');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 400; canvas.height = 400;
+                    ctx.drawImage(img, 0, 0, 400, 400);
+                    photoData = canvas.toDataURL('image/jpeg', 0.6);
+                    alert("Photo processed!");
                 };
-                reader.readAsDataURL(file);
+                img.src = ev.target.result;
             };
+            reader.readAsDataURL(file);
+        };
 
-            function handleDelete() {
-                if (confirm("Delete this record?")) {
-                    const idx = document.getElementById('rowIndex').value;
-                    const pin = prompt("Enter PIN to confirm delete");
-                    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin }) })
-                        .then(() => { alert("Deleted"); location.reload(); });
-                }
+        function handleDelete() {
+            if (confirm("Delete this record?")) {
+                const idx = document.getElementById('rowIndex').value;
+                const pin = prompt("Enter PIN to confirm delete");
+                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin }) })
+                    .then(() => { alert("Deleted"); location.reload(); });
             }
+        }
 
-            function toggleOther(sel, targetId) {
-                const t = document.getElementById(targetId);
-                if (sel.value === 'Other') t.classList.remove('hidden');
-                else t.classList.add('hidden');
+        function toggleOther(sel, targetId) {
+            const t = document.getElementById(targetId);
+            if (sel.value === 'Other') t.classList.remove('hidden');
+            else t.classList.add('hidden');
+        }
+
+        /* --- AI ASSISTANT LOGIC --- */
+        const msgContainer = document.getElementById('messagesContainer');
+        const msgInput = document.getElementById('messageInput');
+
+        document.getElementById('sendBtn').onclick = sendMessage;
+        msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        async function sendMessage() {
+            const txt = msgInput.value.trim();
+            if (!txt) return;
+
+            // Add User Msg
+            addAiMessage(txt, 'user');
+            msgInput.value = '';
+
+            // Show Loading
+            document.getElementById('typingIndicator').classList.remove('hidden');
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            try {
+                const res = await fetch(N8N_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'sendMessage', sessionId: aiSessionId, chatInput: txt })
+                });
+                const data = await res.json();
+                const reply = data.output || data.response || data.message || "I didn't understand that.";
+
+                document.getElementById('typingIndicator').classList.add('hidden');
+                addAiMessage(reply, 'bot');
+            } catch (e) {
+                document.getElementById('typingIndicator').classList.add('hidden');
+                addAiMessage("Sorry, connection error.", 'bot');
             }
+        }
 
-            /* --- AI ASSISTANT LOGIC --- */
-            const msgContainer = document.getElementById('messagesContainer');
-            const msgInput = document.getElementById('messageInput');
-
-            document.getElementById('sendBtn').onclick = sendMessage;
-            msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-
-            async function sendMessage() {
-                const txt = msgInput.value.trim();
-                if (!txt) return;
-
-                // Add User Msg
-                addAiMessage(txt, 'user');
-                msgInput.value = '';
-
-                // Show Loading
-                document.getElementById('typingIndicator').classList.remove('hidden');
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-
-                try {
-                    const res = await fetch(N8N_WEBHOOK, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'sendMessage', sessionId: aiSessionId, chatInput: txt })
-                    });
-                    const data = await res.json();
-                    const reply = data.output || data.response || data.message || "I didn't understand that.";
-
-                    document.getElementById('typingIndicator').classList.add('hidden');
-                    addAiMessage(reply, 'bot');
-                } catch (e) {
-                    document.getElementById('typingIndicator').classList.add('hidden');
-                    addAiMessage("Sorry, connection error.", 'bot');
-                }
-            }
-
-            function addAiMessage(text, sender) {
-                const div = document.createElement('div');
-                div.className = `ai-message ${sender} flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
-                div.innerHTML = `
+        function addAiMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `ai-message ${sender} flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            div.innerHTML = `
                 <div class="avatar w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0">
                     ${sender === 'bot' ? '🤖' : '👤'}
                 </div>
@@ -1303,58 +1425,70 @@
                     ${text}
                 </div>
             `;
-                // Remove welcome if exists
-                const welcome = msgContainer.querySelector('.initial-welcome');
-                if (welcome) welcome.remove();
+            // Remove welcome if exists
+            const welcome = msgContainer.querySelector('.initial-welcome');
+            if (welcome) welcome.remove();
 
-                msgContainer.appendChild(div);
-                msgContainer.scrollTo({ top: msgContainer.scrollHeight, behavior: 'smooth' });
+            msgContainer.appendChild(div);
+            msgContainer.scrollTo({ top: msgContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        function showNotification(body) {
+            if (Notification.permission === 'granted') new Notification('LeadPro', { body, icon: 'icon-192.png' });
+        }
+
+
+        /* --- HOME STATS & CHARTS --- */
+        let statusChart = null;
+
+        function updateHomeStats() {
+            // Calculate Stats
+            const total = allLeads.length;
+            const hot = allLeads.filter(l => (l.Status || '').toLowerCase().includes('hot')).length;
+            const won = allLeads.filter(l => (l.Status || '').toLowerCase().includes('closed')).length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-hot').innerText = hot;
+            document.getElementById('stat-won').innerText = won;
+            document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString();
+
+            // Display Assigned Projects
+            const badgeContainer = document.getElementById('assignedProjectsContainer');
+            const projectBadges = document.getElementById('projectBadges');
+            if (userProjects && userProjects.length > 0) {
+                badgeContainer.classList.remove('hidden');
+                projectBadges.innerHTML = userProjects.map(p => `
+                    <span class="px-3 py-1.5 bg-white text-blue-600 rounded-full text-[10px] font-black uppercase ring-1 ring-blue-100 shadow-sm">${p}</span>
+                `).join('');
+            } else {
+                badgeContainer.classList.add('hidden');
             }
 
-            function showNotification(body) {
-                if (Notification.permission === 'granted') new Notification('LeadPro', { body, icon: 'icon-192.png' });
-            }
+            // Stats Chart
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const counts = {};
+            allLeads.forEach(l => {
+                const s = l.Status || 'New';
+                counts[s] = (counts[s] || 0) + 1;
+            });
 
+            if (statusChart) statusChart.destroy();
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        data: Object.values(counts),
+                        backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#a855f7', '#64748b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
 
-            /* --- HOME STATS & CHARTS --- */
-            let statusChart = null;
-
-            function updateHomeStats() {
-                // Calculate Stats
-                const total = allLeads.length;
-                const hot = allLeads.filter(l => (l.Status || '').toLowerCase().includes('hot')).length;
-                const won = allLeads.filter(l => (l.Status || '').toLowerCase().includes('closed')).length;
-
-                document.getElementById('stat-total').innerText = total;
-                document.getElementById('stat-hot').innerText = hot;
-                document.getElementById('stat-won').innerText = won;
-                document.getElementById('lastUpdated').innerText = 'Updated ' + new Date().toLocaleTimeString();
-
-                // Stats Chart
-                const ctx = document.getElementById('statusChart').getContext('2d');
-                const counts = {};
-                allLeads.forEach(l => {
-                    const s = l.Status || 'New';
-                    counts[s] = (counts[s] || 0) + 1;
-                });
-
-                if (statusChart) statusChart.destroy();
-                statusChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: Object.keys(counts),
-                        datasets: [{
-                            data: Object.values(counts),
-                            backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#a855f7', '#64748b'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
-
-                // Recent Table
-                const tbody = document.getElementById('homeTableBody');
-                tbody.innerHTML = allLeads.slice(0, 5).map(l => `
+            // Recent Table
+            const tbody = document.getElementById('homeTableBody');
+            tbody.innerHTML = allLeads.slice(0, 5).map(l => `
                 <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
@@ -1366,17 +1500,17 @@
                     <td class="px-6 py-4 text-xs font-bold text-slate-400">${timeAgo(l.Timestamp)}</td>
                 </tr>
             `).join('');
-            }
+        }
 
-            /* --- PWA SERVICE WORKER --- */
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(reg => console.log('SW Registered'))
-                        .catch(err => console.log('SW Fail:', err));
-                });
-            }
-        </script>
+        /* --- PWA SERVICE WORKER --- */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Fail:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
