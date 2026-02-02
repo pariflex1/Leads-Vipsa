@@ -882,14 +882,27 @@
                         type: credential.type
                     };
 
-                    const res = await fetch(SCRIPT_URL, {
+                    const response = await fetch(SCRIPT_URL, {
                         method: 'POST',
                         body: JSON.stringify({
                             action: 'register_passkey',
                             username: username,
                             credential: JSON.stringify(credObject)
                         })
-                    }).then(r => r.json());
+                    });
+                    
+                    const responseText = await response.text();
+                    let res;
+                    try {
+                        res = JSON.parse(responseText);
+                    } catch (e) {
+                        // Handle cases where Apps Script returns plain text instead of JSON
+                        if (responseText.trim() === "New Record") {
+                            res = { status: 'success', message: 'Passkey registered successfully' };
+                        } else {
+                            throw new Error('Invalid server response: ' + responseText);
+                        }
+                    }
 
                     if (res.status === 'success') {
                         localStorage.setItem('passkeyRegistered', 'true');
