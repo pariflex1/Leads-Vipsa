@@ -164,9 +164,16 @@
             </nav>
             <div class="p-4">
                 <button onclick="confirmLogout()"
+<<<<<<< HEAD
                     class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-red-100 text-red-500 hover:bg-red-50 transition font-medium text-sm">
                     <span class="material-symbols-outlined text-lg">logout</span> Logout
                 </button>
+=======
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-left text-sm font-medium text-red-500 hover:bg-red-50 transition">
+                    <i class="fa-solid fa-power-off w-5"></i> Logout
+                </button>
+
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
             </div>
         </aside>
 
@@ -205,9 +212,21 @@
                         <span class="material-symbols-outlined">search</span>
                     </button>
                     <button onclick="loadLeads()"
+<<<<<<< HEAD
                         class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-primary active:scale-95 transition"
                         title="Refresh Data">
                         <span class="material-symbols-outlined">sync</span>
+=======
+                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition"
+                        title="Refresh">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+
+                    <!-- Mobile Logout -->
+                    <button onclick="confirmLogout()"
+                        class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition">
+                        <i class="fa-solid fa-power-off"></i>
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
                     </button>
                     <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden ring-2 ring-white shadow-sm">
                         <img src="https://ui-avatars.com/api/?background=random" class="w-full h-full object-cover"
@@ -229,8 +248,194 @@
             <!-- DYNAMIC VIEWS CONTAINER -->
             <div id="content-area" class="flex-1 overflow-y-auto custom-scroll relative p-4 md:p-8 pb-32 md:pb-8">
 
+<<<<<<< HEAD
                 <!-- VIEW 1: HOME (Stats & Analytics) -->
                 <div id="view-home" class="view-section hidden space-y-6">
+=======
+                <!-- VIEW 1: LEADS (Grid) -->
+                <div id="view-leads" class="view-section space-y-6">
+                    <div id="loader" class="flex flex-col items-center justify-center py-20">
+                        <div
+                            class="animate-spin rounded-full h-10 w-10 border-[3px] border-slate-200 border-t-blue-600">
+                        </div>
+                        <p class="mt-4 text-slate-400 text-sm font-medium animate-pulse">Syncing data...</p>
+                    </div>
+                    <div id="leadGrid" class="flex flex-col gap-3 max-w-3xl mx-auto pb-4">
+                    </div>
+                    <div id="loadMoreContainer" class="text-center py-6 hidden">
+                        <button onclick="renderNextBatch()"
+                            class="px-6 py-2.5 rounded-full bg-white border border-slate-200 text-sm font-bold text-slate-600 shadow-sm hover:shadow-md hover:text-blue-600 transition">
+                            Load More
+                        </button>
+                    </div>
+                    <div id="emptyState" class="hidden text-center py-20">
+                        <div
+                            class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl text-slate-300">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h3 class="text-slate-700 font-bold text-lg">No leads found</h3>
+                        <p class="text-slate-400 text-sm">Try adjusting your search filters</p>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: FORM (New Entry) -->
+                <div id="view-form" class="view-section hidden max-w-2xl mx-auto">
+                    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 z-0"></div>
+
+                        <div class="relative z-10 mb-6 flex justify-between items-center">
+                            <h2 class="text-xl font-black text-slate-800">New Entry</h2>
+                            <span
+                                class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wide">Manual</span>
+                        </div>
+
+                        <form id="leadForm" class="space-y-4">
+                            <input type="hidden" id="rowIndex" name="rowIndex">
+                            <input type="hidden" id="existingImg" name="existingImg">
+                            <input type="hidden" id="UserName" name="UserName">
+                            <input type="hidden" id="UserContact" name="UserContact">
+
+                            <!-- Contact Check -->
+                            <div class="bg-slate-50 p-4 rounded-2xl">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Contact Number
+                                    *</label>
+                                <div class="relative">
+                                    <input type="tel" id="Contact" name="Contact" maxlength="10" required
+                                        oninput="autoSearch(this.value)"
+                                        class="w-full bg-transparent border-none p-0 text-xl font-bold text-slate-800 placeholder-slate-300 focus:ring-0"
+                                        placeholder="9876543210">
+                                    <i
+                                        class="fa-solid fa-phone absolute right-0 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                                </div>
+                                <p id="statusMsg" class="text-[10px] mt-2 font-bold italic h-4"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Full Name
+                                        *</label>
+                                    <input type="text" id="Name" name="Name" required
+                                        class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50 transition outline-none font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">City
+                                        *</label>
+                                    <input type="text" id="City" name="City" value="Jhansi" required
+                                        class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-200 focus:ring-4 focus:ring-blue-50 transition outline-none font-semibold">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-black text-slate-400 uppercase mb-1">Profession</label>
+                                    <select id="Profession" name="Profession" required
+                                        onchange="toggleOther(this, 'profOther')"
+                                        class="w-full p-3 bg-slate-50 rounded-xl border-none font-semibold text-slate-600">
+                                        <option value="Business">Business</option>
+                                        <option value="Govt. Employee">Govt. Employee</option>
+                                        <option value="Doctor">Doctor</option>
+                                        <option value="Engineer">Engineer</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <input type="text" id="profOther" placeholder="Specify..."
+                                        class="hidden mt-2 w-full p-3 bg-white border rounded-xl text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Current
+                                        Status</label>
+                                    <select id="Status" name="Status"
+                                        class="w-full p-3 bg-slate-50 rounded-xl border-none font-semibold text-slate-600">
+                                        <option value="New">New Lead</option>
+                                        <option value="Site-visit">Site Visit</option>
+                                        <option value="Follow-up">Follow Up</option>
+                                        <option value="Closed">Closed / Won</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Interested
+                                    Project(s)</label>
+                                <select id="Project" name="Project" multiple
+                                    class="w-full p-3 bg-slate-50 rounded-xl border-none h-24 custom-scroll font-bold text-slate-600 text-sm"></select>
+                                <p class="text-[10px] text-slate-400 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                            </div>
+
+                            <!-- Additional details -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Budget</label><input
+                                        type="text" name="Budget" id="Budget" placeholder="e.g. 50L"
+                                        class="w-full mt-1 p-2 bg-slate-50 rounded-lg text-sm font-semibold"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Property
+                                        Type</label><select name="PropertyType" id="PropertyType"
+                                        class="w-full mt-1 p-2 bg-slate-50 rounded-lg text-sm font-semibold">
+                                        <option>Plots</option>
+                                        <option>Villa</option>
+                                        <option>House</option>
+                                        <option>Land</option>
+                                    </select></div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Next
+                                        Follow-up</label><input type="datetime-local" name="FollowUpDateTime"
+                                        id="FollowUpDateTime"
+                                        class="w-full mt-1 p-2 bg-slate-50 rounded-lg text-sm font-semibold"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase">Email
+                                        (Opt)</label><input type="email" name="Email" id="Email"
+                                        class="w-full mt-1 p-2 bg-slate-50 rounded-lg text-sm font-semibold"></div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Remarks /
+                                    Notes</label>
+                                <textarea id="Note" name="Note" rows="2"
+                                    class="w-full p-3 bg-slate-50 rounded-xl border-none text-sm"></textarea>
+                            </div>
+
+                            <!-- Photo Upload -->
+                            <div
+                                class="flex items-center gap-3 p-3 border border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-white transition-colors cursor-pointer relative">
+                                <div
+                                    class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700">Upload Photo</p>
+                                    <p class="text-[10px] text-slate-400">Max size 90KB</p>
+                                </div>
+                                <input type="file" id="photoInput" accept="image/*"
+                                    class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                            <canvas id="compressor" class="hidden"></canvas>
+
+                            <!-- Actions -->
+                            <div class="pt-2 flex gap-3">
+                                <button type="submit" id="saveBtn"
+                                    class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 transition transform active:scale-95">
+                                    <i class="fa-solid fa-check mr-2"></i> Save Record
+                                </button>
+                                <button type="button" id="deleteZone" onclick="handleDelete()"
+                                    class="hidden w-14 flex items-center justify-center bg-red-100 text-red-500 rounded-xl hover:bg-red-200 transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: HOME (Stats & Analytics) -->
+                <div id="view-home" class="view-section hidden space-y-8">
+                    <!-- Project Assignments -->
+                    <div id="assignedProjectsContainer"
+                        class="bg-blue-50/50 p-4 rounded-[2rem] border border-blue-100 hidden">
+                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 px-2">Your
+                            Assigned Projects</p>
+                        <div id="projectBadges" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div
@@ -663,7 +868,9 @@
             <span class="material-symbols-outlined text-2xl mb-0.5">smart_toy</span>
             <span class="text-[10px] font-bold">AI</span>
         </button>
+    </div>
 
+<<<<<<< HEAD
         <button onclick="switchTab('settings')"
             class="nav-item flex flex-col items-center gap-1 p-2 text-slate-300 transition-colors w-16 hover:text-primary"
             data-tab="settings">
@@ -698,6 +905,33 @@
                     class="flex-1 py-4 rounded-2xl bg-slate-50 font-bold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
                 <button onclick="logout()"
                     class="flex-1 py-4 rounded-2xl bg-red-500 text-white font-bold shadow-lg shadow-red-200 hover:bg-red-600 transition">Logout</button>
+=======
+    <!-- MODALS -->
+    <!-- Lead Detail Modal -->
+    <div id="leadModal"
+        class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        onclick="closeOnBackdrop(event)">
+        <div class="bg-white rounded-[2rem] w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]"
+            id="modalContainer">
+            <div class="overflow-y-auto custom-scroll p-6 md:p-8" id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Logout Confirm Modal -->
+    <div id="logoutModal"
+        class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-[2rem] w-full max-w-xs shadow-2xl text-center">
+            <div
+                class="w-14 h-14 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Log out?</h3>
+            <div class="flex gap-3 mt-6">
+                <button onclick="document.getElementById('logoutModal').classList.add('hidden')"
+                    class="flex-1 py-3 rounded-2xl border border-slate-200 font-bold text-slate-600">Cancel</button>
+                <button onclick="logout()"
+                    class="flex-1 py-3 rounded-2xl bg-red-600 text-white font-bold shadow-lg shadow-red-200">Logout</button>
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
             </div>
         </div>
     </div>
@@ -925,6 +1159,7 @@
             document.getElementById('UserName').value = name;
             document.getElementById('UserContact').value = localStorage.getItem('userContact') || '';
 
+<<<<<<< HEAD
             // Set User Info for Settings View
             const role = localStorage.getItem('userRole') || 'User';
             document.getElementById('settings-name').textContent = name;
@@ -940,6 +1175,12 @@
             // Start Polling
             checkInterval = setInterval(checkForUpdates, 30000);
 
+=======
+            loadLeads(); // Load data
+            // Start Polling
+            checkInterval = setInterval(checkForUpdates, 30000);
+
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
             // Default Tab
             switchTab('leads');
 
@@ -1079,7 +1320,12 @@
                 const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
 
                 return `
+<<<<<<< HEAD
                 <div onclick="openLeadModal(${globalIndex})" class="bg-white p-4 rounded-[1.5rem] shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]">
+=======
+                <div onclick="openLeadModal(${globalIndex})" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all cursor-pointer flex items-center gap-3 md:gap-4 group">
+                    <!-- Avatar -->
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
                     <div class="relative shrink-0">
                         <img src="${imgUrl}" loading="lazy" class="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-sm filter group-hover:brightness-110 transition">
                         <div class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${statusColor}"></div>
@@ -1232,8 +1478,112 @@
                             </p>
                         </div>
                     </div>
+<<<<<<< HEAD
                     <button onclick="document.getElementById('leadModal').classList.add('hidden')" class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition flex items-center justify-center active:scale-95">
                         <span class="material-symbols-outlined">close</span>
+=======
+                </div>`;
+            }).join('');
+
+            grid.insertAdjacentHTML('beforeend', html);
+            displayedCount += batch.length;
+
+            // Toggle Load More Button
+            if (displayedCount >= allLeads.length) loadBtnContainer.classList.add('hidden');
+            else loadBtnContainer.classList.remove('hidden');
+        }
+
+        async function checkForUpdates() {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:A?key=${API_KEY}`; // Lightweight check
+                const res = await fetch(url).then(r => r.json());
+                const count = (res.values || []).length;
+                if (count > lastLeadCount) {
+                    showNotification(`${count - lastLeadCount} New Leads!`);
+                    loadLeads();
+                }
+                lastLeadCount = count;
+            } catch (e) { }
+        }
+
+        /* --- HELPER UTILS --- */
+        function formatTimestamp(date = new Date()) {
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
+        function getProxiedImageUrl(url, name) {
+            if (!url) return 'https://ui-avatars.com/api/?background=random&name=' + name;
+            let cleanUrl = String(url).trim();
+
+            // Check if it's a Drive URL
+            const driveMatch = cleanUrl.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-0-9a-zA-Z_]+)/);
+            if (driveMatch && driveMatch[1]) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w500`;
+
+            // Check if it's just a Drive ID (alphanumeric, underscores, hyphens, 25-45 chars)
+            if (/^[a-zA-Z0-9_-]{25,45}$/.test(cleanUrl)) return `https://drive.google.com/thumbnail?id=${cleanUrl}&sz=w500`;
+
+            // Fallback for direct links
+            return cleanUrl;
+        }
+
+        function getStatusColor(s) {
+            s = String(s).toLowerCase();
+            if (s.includes('hot')) return 'bg-red-500';
+            if (s.includes('closed') || s.includes('won')) return 'bg-green-500';
+            if (s.includes('visit')) return 'bg-purple-500';
+            return 'bg-blue-500';
+        }
+
+        function timeAgo(dateString) {
+            if (!dateString) return '';
+
+            // Custom parsing for DD/MM/YYYY HH:MM
+            let date;
+            const parts = String(dateString).trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})/);
+            if (parts) {
+                // parts: [full, day, month, year, hour, minute]
+                // months are 0-indexed in JS Date
+                date = new Date(parts[3], parts[2] - 1, parts[1], parts[4], parts[5]);
+            } else {
+                date = new Date(dateString.trim());
+            }
+
+            if (isNaN(date.getTime())) return '';
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            return Math.floor(hours / 24) + 'd ago';
+        }
+
+        function handleSearch() {
+            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
+            allLeads = filtered;
+            renderNextBatch(true);
+        }
+
+        /* --- LEAD MODAL --- */
+        function openLeadModal(index) {
+            const lead = allLeads[index]; // Note: This uses the currently sorted/filtered list
+            const cleanPhone = String(lead.Contact || '').replace(/\D/g, '');
+            const modalContent = document.getElementById('modalContent');
+
+            modalContent.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4">
+                        <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" class="w-16 h-16 rounded-2xl object-cover shadow-lg ring-4 ring-white">
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-800">${lead.Name}</h2>
+                            <p class="text-blue-600 font-bold text-xs uppercase tracking-wide">${lead.Profession} • ${lead.City}</p>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('leadModal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 transition flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+>>>>>>> 256ab8802754015ee186285331cccff3c085abc7
                     </button>
                     
                     <!-- Decorative BG Blob -->
