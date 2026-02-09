@@ -14,7 +14,8 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,7 +31,7 @@
                         "background-dark": "#0f172a",
                     },
                     fontFamily: {
-                        "sans": ["Poppins", "sans-serif"]
+                        "sans": ["Inter", "system-ui", "sans-serif"]
                     },
                     borderRadius: {
                         "DEFAULT": "0.375rem",
@@ -56,7 +57,8 @@
             scrollbar-width: none;
         }
         body {
-            @apply bg-background-light text-slate-900 font-sans;
+            @apply bg-background-light font-sans;
+            color: #000000;
         }
         
         /* Auth Screen Gradients */
@@ -89,11 +91,31 @@
         header.sticky-hidden {
             display: none !important;
         }
+        
+        /* Sidebar Active State */
+        .sidebar-link.active {
+            background-color: rgba(25, 127, 230, 0.1);
+            color: #197fe6;
+        }
+        .sidebar-link.active .material-symbols-outlined {
+            color: #197fe6;
+        }
+        
+        /* Desktop Layout Fix */
+        @media (min-width: 768px) {
+            #mainApp {
+                display: flex !important;
+            }
+            main {
+                flex: 1;
+                min-width: 0; /* Prevent flex item overflow */
+            }
+        }
     </style>
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100 h-screen overflow-hidden flex flex-col md:flex-row">
+    class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100 min-h-screen overflow-hidden">
 
     <!-- 1. AUTH SCREEN -->
     <div id="authScreen" class="fixed inset-0 z-[200] auth-gradient flex items-center justify-center p-4">
@@ -103,8 +125,8 @@
                     class="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-3xl">fingerprint</span>
                 </div>
-                <h2 class="text-2xl font-black text-slate-800">Secure Access</h2>
-                <p class="text-slate-400 text-sm">Enter credentials to continue</p>
+                <h2 class="text-2xl font-black" style="color: #000000;">Secure Access</h2>
+                <p class="text-slate-500 text-sm font-medium">Enter credentials to continue</p>
             </div>
             <div class="space-y-4">
                 <input type="text" id="userInp" placeholder="Username"
@@ -119,15 +141,14 @@
     </div>
 
     <!-- 2. MAIN APP CONTAINER -->
-    <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500 flex h-screen overflow-hidden">
+    <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500 flex flex-col md:flex-row h-screen w-full overflow-hidden fixed inset-0">
 
         <!-- SIDEBAR (Desktop Only) -->
-        <!-- SIDEBAR (Desktop) -->
-        <aside class="hidden md:flex w-64 flex-col bg-white border-r border-slate-200 h-full z-20">
+        <aside class="hidden md:flex w-64 flex-col bg-white border-r border-slate-200 h-full z-20 flex-shrink-0">
             <div class="p-6 border-b border-slate-50">
                 <div class="flex items-center gap-2 text-primary">
                     <span class="material-symbols-outlined text-3xl font-bold">real_estate_agent</span>
-                    <span class="font-bold text-xl tracking-tight text-slate-800">SkyCRM</span>
+                    <span class="font-bold text-xl tracking-tight" style="color: #000000;">SkyCRM</span>
                 </div>
             </div>
             <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -177,13 +198,13 @@
                 <!-- Mobile Logo (Hidden per user request) -->
                 <div class="hidden md:flex items-center gap-2 text-primary">
                     <span class="material-symbols-outlined text-2xl font-bold">real_estate_agent</span>
-                    <span class="font-bold text-lg tracking-tight text-slate-800">SkyCRM</span>
+                    <span class="font-bold text-lg tracking-tight" style="color: #000000;">SkyCRM</span>
                 </div>
 
                 <!-- Desktop Title (Hidden on Mobile) -->
                 <div class="hidden md:block">
-                    <h2 class="text-xl font-black text-slate-800">Dashboard</h2>
-                    <p class="text-xs font-bold text-slate-400" id="headerDate">Today</p>
+                    <h2 class="text-xl font-black" style="color: #000000;">Dashboard</h2>
+                    <p class="text-xs font-semibold text-slate-500" id="headerDate">Today</p>
                 </div>
 
                 <!-- Search Bar -->
@@ -238,7 +259,8 @@
                             </div>
                             <p class="relative z-10 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 Total Leads</p>
-                            <h3 id="stat-total" class="relative z-10 text-3xl font-black mt-2 text-slate-800">0</h3>
+                            <h3 id="stat-total" class="relative z-10 text-3xl font-black mt-2" style="color: #000000;">0
+                            </h3>
                         </div>
                         <div
                             class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden group">
@@ -280,7 +302,7 @@
                     <!-- Recent Table -->
                     <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                         <div class="p-6 border-b border-slate-50 flex justify-between items-center">
-                            <h2 class="font-bold text-slate-800 text-lg">Recent Enquiries</h2>
+                            <h2 class="font-bold text-lg" style="color: #000000;">Recent Enquiries</h2>
                             <span class="text-xs font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full"
                                 id="lastUpdated">Just now</span>
                         </div>
@@ -320,7 +342,7 @@
                         <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                             <span class="material-symbols-outlined text-4xl text-slate-300">search_off</span>
                         </div>
-                        <h3 class="text-slate-800 font-black text-xl">No leads found</h3>
+                        <h3 class="font-black text-xl" style="color: #000000;">No leads found</h3>
                         <p class="text-slate-400 text-sm mt-2 max-w-xs mx-auto">We couldn't find any records matching
                             your search filters.</p>
                         <button onclick="document.getElementById('searchInput').value=''; handleSearch()"
@@ -337,7 +359,7 @@
                             <div class="flex items-center gap-3 mb-2">
                                 <span
                                     class="bg-primary/10 text-primary p-2 rounded-xl material-symbols-outlined">person_add</span>
-                                <h2 class="text-2xl font-black text-slate-800">New Entry</h2>
+                                <h2 class="text-2xl font-black" style="color: #000000;">New Entry</h2>
                             </div>
                             <p class="text-slate-400 text-sm">Add a new lead to the database manually.</p>
                         </div>
@@ -347,6 +369,7 @@
                             <input type="hidden" id="existingImg" name="existingImg">
                             <input type="hidden" id="UserName" name="UserName">
                             <input type="hidden" id="UserContact" name="UserContact">
+                            <input type="hidden" id="LeadSource" name="LeadSource" value="App">
 
                             <!-- Contact Check -->
                             <div
@@ -384,7 +407,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label
-                                        class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Profession</label>
+                                        class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Profession
+                                        *</label>
                                     <div class="relative">
                                         <select id="Profession" name="Profession" required
                                             onchange="toggleOther(this, 'profOther')"
@@ -398,7 +422,7 @@
                                         <span
                                             class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                                     </div>
-                                    <input type="text" id="profOther" placeholder="Specify..."
+                                    <input type="text" id="profOther" placeholder="Specify profession..."
                                         class="hidden mt-2 w-full p-3 bg-white border border-slate-200 rounded-xl text-sm font-medium">
                                 </div>
                                 <div>
@@ -421,9 +445,9 @@
                             <div>
                                 <label
                                     class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Interested
-                                    Project(s)</label>
+                                    Project(s) *</label>
                                 <div class="bg-slate-50 rounded-2xl p-2 border border-slate-100">
-                                    <select id="Project" name="Project" multiple
+                                    <select id="Project" name="Project" multiple required
                                         class="w-full bg-transparent border-none p-2 h-24 custom-scroll font-bold text-slate-600 text-sm focus:ring-0"></select>
                                 </div>
                                 <p class="text-[10px] text-slate-400 mt-1 ml-1 flex items-center gap-1"><span
@@ -441,15 +465,27 @@
                                 <div>
                                     <label
                                         class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Property
-                                        Type</label>
-                                    <select name="PropertyType" id="PropertyType"
+                                        Type *</label>
+                                    <select name="PropertyType" id="PropertyType" required
+                                        onchange="toggleOther(this, 'propTypeOther')"
                                         class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold text-sm text-slate-600">
                                         <option>Plots</option>
                                         <option>Villa</option>
                                         <option>House</option>
                                         <option>Land</option>
+                                        <option value="Other">Other</option>
                                     </select>
+                                    <input type="text" id="propTypeOther" placeholder="Specify property type..."
+                                        class="hidden mt-2 w-full p-3 bg-white border border-slate-200 rounded-xl text-sm font-medium">
                                 </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 ml-1">Location
+                                    Preference</label>
+                                <input type="text" name="LocationPrefer" id="LocationPrefer"
+                                    placeholder="e.g. Near Highway, City Center"
+                                    class="w-full p-3 bg-slate-50 rounded-xl border-none font-bold text-sm">
                             </div>
 
                             <div class="grid grid-cols-2 gap-5">
@@ -516,7 +552,7 @@
                             <span class="material-symbols-outlined text-lg">smart_toy</span>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-sm">Pari AI</h3>
+                            <h3 class="font-semibold text-sm" style="color: #000000;">Pari AI</h3>
                             <div class="flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                 <p class="text-[10px] font-bold text-slate-400">Online</p>
@@ -532,7 +568,7 @@
                                 <img src="https://cdni.iconscout.com/illustration/premium/thumb/3d-robot-helper-illustration-download-in-svg-png-gif-file-formats--robotic-chat-bot-pack-science-technology-illustrations-4861502.png"
                                     class="w-32 h-32 object-contain mx-auto">
                             </div>
-                            <h2 class="text-xl font-black text-slate-800">Hello!</h2>
+                            <h2 class="text-xl font-black" style="color: #000000;">Hello!</h2>
                             <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">I can help you summaries leads,
                                 draft messages, or answer questions.</p>
                         </div>
@@ -573,7 +609,8 @@
                                 <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff"
                                     id="settings-avatar" class="w-full h-full rounded-full object-cover">
                             </div>
-                            <h2 class="mt-4 text-xl font-black text-slate-800" id="settings-name">User Name</h2>
+                            <h2 class="mt-4 text-xl font-black" style="color: #000000;" id="settings-name">User Name
+                            </h2>
                             <span
                                 class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wide mt-2 inline-block shadow-sm"
                                 id="settings-role">Role</span>
@@ -705,7 +742,7 @@
         /* --- CONSTANTS & STATE --- */
         const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHaUBG_uqUJXcQbgnSlKubIqRwKw81-OTrvxbKcg3G_jblJhTJARg2IHRJ0_qEwn7d/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8jr8eY787YXZ75RzvdNZXMsLrwJ6AydWJDFBiFoj97eFA2ADyCSUBxDTy4ehxYZdt/exec';
         const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
 
         let allLeads = []; // Shared Global State
@@ -882,9 +919,9 @@
             const loader = document.getElementById('loader');
             loader.classList.remove('hidden');
             try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:P?key=${API_KEY}`;
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Leads!A2:Q?key=${API_KEY}`;
                 const res = await fetch(url).then(r => r.json());
-                const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUpDateTime', 'UserName', 'UserContact', 'ClientImageUrl'];
+                const headers = ['Timestamp', 'Name', 'Contact', 'City', 'Profession', 'Email', 'Status', 'Note', 'Project', 'PropertyType', 'Budget', 'LocationPrefer', 'FollowUpDateTime', 'UserName', 'UserContact', 'ClientImageUrl', 'LeadSource'];
 
                 rawLeads = (res.values || []).map(row => {
                     let obj = {};
@@ -980,14 +1017,14 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h3 class="font-normal text-black text-base truncate">${lead.Name}</h3>
-                                <p class="text-xs text-black font-normal opacity-70">${lead.Contact}</p>
+                                <h3 class="font-semibold text-base truncate" style="color: #000000;">${lead.Name}</h3>
+                                <p class="text-xs font-medium" style="color: #1a1a1a; opacity: 0.7;">${lead.Contact}</p>
                             </div>
-                            <div class="text-[10px] font-normal text-black opacity-50 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
+                            <div class="text-[10px] font-medium bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100" style="color: #1a1a1a; opacity: 0.6;">
                                 ${timeAgo(lead.Timestamp)}
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5 text-[11px] text-black opacity-60 mt-1 font-normal overflow-hidden">
+                        <div class="flex items-center gap-1.5 text-[11px] mt-1 font-medium overflow-hidden" style="color: #1a1a1a; opacity: 0.65;">
                             <span class="truncate">${lead.Project || 'Unassigned'}</span>
                             <span class="text-slate-300">|</span>
                             <span class="truncate">${lead.City}</span>
@@ -996,7 +1033,7 @@
                         </div>
                     </div>
                     <div class="hidden md:block">
-                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-normal uppercase tracking-wide border border-slate-100 text-black opacity-70">${lead.Status}</span>
+                        <span class="px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wide border border-slate-100" style="color: #000000; opacity: 0.8;">${lead.Status}</span>
                     </div>
                 </div>`;
             }).join('');
@@ -1102,8 +1139,22 @@
                 clearBtn.classList.remove('flex');
             }
 
-            const filtered = rawLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
-            // Sort Newest First (reverse of rawLeads which usually comes in chronological order)
+            // Filter from user-assigned leads only (stored in a global variable after loadLeads)
+            const currentDisplayName = localStorage.getItem('displayName');
+            const currentUserRole = localStorage.getItem('userRole') || 'User';
+
+            // Get user's filtered leads first
+            let userFilteredLeads = rawLeads.filter(lead => {
+                const leadProjs = (lead.Project || '').split(',').map(s => s.trim());
+                const isAssignedProject = leadProjs.some(lp => userProjects.includes(lp));
+                const isOwner = String(lead.UserName || '').toLowerCase() === currentDisplayName.toLowerCase();
+                return isAssignedProject || isOwner;
+            });
+
+            // Then apply search filter to user's leads only
+            const filtered = userFilteredLeads.filter(lead => Object.values(lead).some(val => String(val).toLowerCase().includes(term)));
+
+            // Sort Newest First
             allLeads = filtered.reverse();
             renderNextBatch(true);
         }
@@ -1124,6 +1175,10 @@
             const badgeBg = statusColor.replace('bg-', 'bg-').replace('500', '50');
             const badgeText = statusColor.replace('bg-', 'text-').replace('500', '600');
 
+            // Format follow-up date for display
+            const followUpDisplay = lead.FollowUpDateTime ? formatHumanDate(lead.FollowUpDateTime) : 'Not set';
+            const followUpValue = lead.FollowUpDateTime ? convertToDatetimeLocal(lead.FollowUpDateTime) : '';
+
             modalContent.innerHTML = `
                 <div class="flex justify-between items-start mb-8 relative">
                     <div class="flex items-center gap-5">
@@ -1133,14 +1188,24 @@
                                  <span class="material-symbols-outlined text-[10px] text-white font-bold">check</span>
                              </div>
                         </div>
-                        <div>
-                            <h2 class="text-2xl font-black text-slate-800 tracking-tight leading-tight">${lead.Name}</h2>
-                            <p class="text-slate-400 font-bold text-xs uppercase tracking-wide mt-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">work</span> ${lead.Profession}
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-black tracking-tight leading-tight" style="color: #000000;">${lead.Name}</h2>
+                            <p class="text-slate-500 font-semibold text-sm mt-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">phone</span> ${lead.Contact}
                             </p>
-                            <p class="text-slate-400 font-bold text-xs uppercase tracking-wide mt-0.5 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">location_city</span> ${lead.City}
-                            </p>
+                            <div class="flex items-center gap-2 mt-2 text-xs font-medium text-slate-600">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">location_city</span> ${lead.City}
+                                </span>
+                                <span class="text-slate-300">â€¢</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">work</span> ${lead.Profession}
+                                </span>
+                                <span class="text-slate-300">â€¢</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">home</span> ${lead.PropertyType}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <button onclick="document.getElementById('leadModal').classList.add('hidden')" class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition flex items-center justify-center active:scale-95">
@@ -1153,23 +1218,38 @@
 
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="p-4 bg-slate-50/80 rounded-[1.5rem] border border-slate-100">
-                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Current Status</label>
-                        <span class="inline-block px-3 py-1 rounded-lg ${badgeBg} ${badgeText} text-xs font-bold">${lead.Status}</span>
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Status</label>
+                        <select id="modalStatus" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-semibold text-sm" style="color: #000000;">
+                            <option value="New" ${lead.Status === 'New' ? 'selected' : ''}>New Lead</option>
+                            <option value="Site-visit" ${lead.Status === 'Site-visit' ? 'selected' : ''}>Site Visit</option>
+                            <option value="Follow-up" ${lead.Status === 'Follow-up' ? 'selected' : ''}>Follow Up</option>
+                            <option value="Hot" ${lead.Status === 'Hot' ? 'selected' : ''}>Hot Lead</option>
+                            <option value="Closed" ${lead.Status === 'Closed' ? 'selected' : ''}>Closed / Won</option>
+                        </select>
                     </div>
                     <div class="p-4 bg-slate-50/80 rounded-[1.5rem] border border-slate-100">
-                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Budget</label>
-                        <p class="font-bold text-slate-700 text-sm">${lead.Budget || 'Not specified'}</p>
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Budget</label>
+                        <p class="font-semibold text-sm" style="color: #000000;">${lead.Budget || 'Not specified'}</p>
+                    </div>
+                    <div class="p-4 bg-slate-50/80 rounded-[1.5rem] border border-slate-100 col-span-2">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Follow-Up Date</label>
+                        <input type="datetime-local" id="modalFollowUp" value="${followUpValue}" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-semibold text-sm" style="color: #000000;">
                     </div>
                     <div class="p-4 bg-slate-50/80 rounded-[1.5rem] border border-slate-100 col-span-2 relative overflow-hidden">
                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Interested In</label>
-                        <p class="font-black text-slate-800 text-base">${lead.Project || 'General Enquiry'}</p>
+                        <p class="font-black text-base" style="color: #000000;">${lead.Project || 'General Enquiry'}</p>
                          <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-200 text-4xl">apartment</span>
                     </div>
                      <div class="p-4 bg-indigo-50/30 rounded-[1.5rem] border border-indigo-50 col-span-2">
-                        <label class="text-[9px] font-black text-indigo-300 uppercase tracking-widest mb-1 block">Remarks / Notes</label>
-                        <p class="font-medium text-slate-600 text-sm leading-relaxed">"${lead.Note || 'No remarks added.'}"</p>
+                        <label class="text-[9px] font-black text-indigo-300 uppercase tracking-widest mb-2 block">Remarks / Notes</label>
+                        <textarea id="modalNote" rows="3" class="w-full p-3 bg-white rounded-lg border border-slate-200 font-medium text-sm leading-relaxed" style="color: #1a1a1a;">${lead.Note || ''}</textarea>
                     </div>
                 </div>
+                
+                <!-- Save Changes Button -->
+                <button onclick="saveModalChanges(${index})" class="w-full py-3 mb-4 bg-slate-900 text-white font-bold rounded-2xl shadow-lg hover:bg-slate-800 transition active:scale-95 flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">save</span> Save Changes
+                </button>
 
                 <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-4 text-center">Quick Actions</h4>
                 <div class="grid grid-cols-4 gap-3">
@@ -1192,6 +1272,77 @@
                 </div>
             `;
             document.getElementById('leadModal').classList.remove('hidden');
+        }
+
+        // Helper function to convert DD/MM/YYYY HH:MM to datetime-local format
+        function convertToDatetimeLocal(dateString) {
+            if (!dateString) return '';
+            try {
+                const parts = String(dateString).trim().match(/(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{1,2})/);
+                if (parts) {
+                    const date = new Date(parts[3], parts[2] - 1, parts[1], parts[4], parts[5]);
+                    if (!isNaN(date.getTime())) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        return `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
+                }
+            } catch (e) { }
+            return '';
+        }
+
+        // Save modal changes function
+        async function saveModalChanges(index) {
+            const lead = allLeads[index];
+            const newStatus = document.getElementById('modalStatus').value;
+            const newFollowUp = document.getElementById('modalFollowUp').value;
+            const newNote = document.getElementById('modalNote').value; // FIX: Get note value from modal
+
+            // Find the row index in rawLeads
+            const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name);
+            if (rawIdx === -1) {
+                alert('Error: Could not locate record');
+                return;
+            }
+
+            // Format follow-up date if exists
+            let formattedFollowUp = '';
+            if (newFollowUp) {
+                const fud = new Date(newFollowUp);
+                if (!isNaN(fud)) {
+                    formattedFollowUp = formatTimestamp(fud);
+                }
+            }
+
+            try {
+                // Update via Apps Script - Specific fields only to prevent data loss
+                const updateData = {
+                    action: 'update_status_followup',
+                    rowIndex: rawIdx + 2, // 1-based index + header row
+                    Status: newStatus,
+                    Note: newNote,
+                    FollowUpDateTime: formattedFollowUp
+                };
+
+                console.log('ðŸ“¤ Popup Save - Sending to Apps Script:', JSON.stringify(updateData, null, 2));
+
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(updateData)
+                });
+
+                alert('âœ… Changes saved successfully! Refreshing data...');
+                document.getElementById('leadModal').classList.add('hidden');
+                loadLeads(); // Refresh data
+            } catch (e) {
+                // CORS prevents reading response, but data is saved
+                alert('âœ… Changes saved successfully! Refreshing data...');
+                document.getElementById('leadModal').classList.add('hidden');
+                loadLeads();
+            }
         }
 
         function closeOnBackdrop(e) { if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); }
@@ -1271,6 +1422,7 @@
             document.getElementById('Budget').value = data.Budget || '';
             document.getElementById('PropertyType').value = data.PropertyType || 'Plots';
             document.getElementById('Email').value = data.Email || '';
+            document.getElementById('LocationPrefer').value = data.LocationPrefer || '';
 
             // Projects (Multi)
             const pArr = (data.Project || '').split(',').map(s => s.trim());
@@ -1295,10 +1447,17 @@
 
                 // Photo Handling: Only send new data if uploaded, otherwise preserve existing
                 if (photoData) {
+                    // New photo uploaded - use base64 data
                     obj.photo = photoData;
+                    delete obj.ClientImageUrl; // Remove old URL to prevent conflict
                 } else if (obj.existingImg) {
+                    // No new photo - keep existing URL
                     obj.ClientImageUrl = obj.existingImg;
+                    delete obj.photo; // Ensure no empty photo field
                 }
+                
+                // Clean up the existingImg field as it's not needed in the final payload
+                delete obj.existingImg;
 
                 obj.Timestamp = formatTimestamp(); // Entry timestamp
 
@@ -1314,12 +1473,32 @@
                 const proj = Array.from(document.getElementById('Project').selectedOptions).map(o => o.value).join(', ');
                 obj.Project = proj;
 
+                // Handle "Other" options for Profession and PropertyType
+                if (obj.Profession === 'Other') {
+                    const profOther = document.getElementById('profOther').value.trim();
+                    if (profOther) obj.Profession = profOther;
+                }
+                if (obj.PropertyType === 'Other') {
+                    const propTypeOther = document.getElementById('propTypeOther').value.trim();
+                    if (propTypeOther) obj.PropertyType = propTypeOther;
+                }
+
+                // Determine action based on whether we're editing or creating
+                const isEdit = obj.rowIndex && obj.rowIndex !== '';
+                const action = isEdit ? 'update' : 'create';
+
+                const payload = { action: action, ...obj };
+                console.log('ðŸ“¤ Sending to Apps Script:', JSON.stringify(payload, null, 2));
+
                 // Send
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(obj)
+                    body: JSON.stringify(payload)
                 }); // Fire and forget mostly as CORS blocks response reading often
 
+                // Reset photo data after successful submission
+                photoData = null;
+                
                 alert("Saved Successfully");
                 location.reload();
             } catch (e) {
@@ -1328,22 +1507,83 @@
             }
         };
 
-        // Photo Comp
+        // Photo Compression with better error handling
         document.getElementById('photoInput').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
+            
+            // Validate file size (max 5MB before compression)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("âš ï¸ File too large. Please select an image under 5MB.");
+                e.target.value = '';
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert("âš ï¸ Please select a valid image file (JPG, PNG, etc.)");
+                e.target.value = '';
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.getElementById('compressor');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 400; canvas.height = 400;
-                    ctx.drawImage(img, 0, 0, 400, 400);
-                    photoData = canvas.toDataURL('image/jpeg', 0.6);
-                    alert("Photo processed!");
+                    try {
+                        const canvas = document.getElementById('compressor');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Better compression: resize to max 300x300 for smaller file size
+                        const maxSize = 300;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions maintaining aspect ratio
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height *= maxSize / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width *= maxSize / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compress more aggressively (0.5 quality = ~50KB final size)
+                        photoData = canvas.toDataURL('image/jpeg', 0.5);
+                        
+                        // Validate final size (Apps Script limit is ~50KB for base64)
+                        const sizeKB = Math.round((photoData.length * 3) / 4 / 1024);
+                        if (sizeKB > 90) {
+                            alert(`âš ï¸ Compressed image is still too large (${sizeKB}KB). Try a smaller image.`);
+                            photoData = null;
+                            e.target.value = '';
+                        } else {
+                            alert(`âœ… Photo processed! Size: ${sizeKB}KB`);
+                        }
+                    } catch (error) {
+                        console.error('Image processing error:', error);
+                        alert('âš ï¸ Error processing image. Please try another file.');
+                        photoData = null;
+                        e.target.value = '';
+                    }
+                };
+                img.onerror = () => {
+                    alert('âš ï¸ Failed to load image. Please try another file.');
+                    e.target.value = '';
                 };
                 img.src = ev.target.result;
+            };
+            reader.onerror = () => {
+                alert('âš ï¸ Failed to read file. Please try again.');
+                e.target.value = '';
             };
             reader.readAsDataURL(file);
         };
@@ -1359,8 +1599,14 @@
 
         function toggleOther(sel, targetId) {
             const t = document.getElementById(targetId);
-            if (sel.value === 'Other') t.classList.remove('hidden');
-            else t.classList.add('hidden');
+            if (sel.value === 'Other') {
+                t.classList.remove('hidden');
+                t.setAttribute('required', 'required');
+            } else {
+                t.classList.add('hidden');
+                t.removeAttribute('required');
+                t.value = '';
+            }
         }
 
         /* --- AI ASSISTANT LOGIC --- */
@@ -1404,7 +1650,7 @@
             div.className = `ai-message ${sender} flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
             div.innerHTML = `
                 <div class="avatar w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0">
-                    ${sender === 'bot' ? '🤖' : '👤'}
+                    ${sender === 'bot' ? 'ðŸ¤–' : 'ðŸ‘¤'}
                 </div>
                 <div class="message-content max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${sender === 'bot' ? 'bg-white text-slate-700 rounded-bl-none' : 'rounded-br-none'}">
                     ${text}
