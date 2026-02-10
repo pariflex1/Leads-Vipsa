@@ -147,7 +147,8 @@
     </div>
 
     <!-- 2. MAIN APP CONTAINER -->
-    <div id="mainApp" class="hidden opacity-0 transition-opacity duration-500 flex flex-col md:flex-row h-screen w-full overflow-hidden fixed inset-0">
+    <div id="mainApp"
+        class="hidden opacity-0 transition-opacity duration-500 flex flex-col md:flex-row h-screen w-full overflow-hidden fixed inset-0">
 
         <!-- SIDEBAR (Desktop Only) -->
         <aside class="hidden md:flex w-64 flex-col bg-white border-r border-slate-200 h-full z-20 flex-shrink-0">
@@ -329,6 +330,23 @@
                         <span
                             class="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
                         <p class="mt-4 text-slate-400 text-sm font-bold animate-pulse">Syncing Database...</p>
+                    </div>
+
+                    <!-- Today's Follow-up Horizontal Scroll -->
+                    <div id="followUpSection" class="hidden">
+                        <div class="flex items-center justify-between px-1 mb-4">
+                            <h3
+                                class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                                Today's Follow-ups
+                            </h3>
+                            <span id="followUpCount"
+                                class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-full border border-orange-100">0</span>
+                        </div>
+                        <div id="followUpScroll"
+                            class="flex gap-3 overflow-x-auto pb-2 hide-scrollbar snap-x snap-mandatory -mx-1 px-1">
+                            <!-- Follow-up cards will be injected here -->
+                        </div>
                     </div>
                     <div id="leadGrid" class="flex flex-col gap-3 max-w-4xl mx-auto pb-4">
                         <!-- Leads injected here -->
@@ -520,10 +538,12 @@
                                     class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
                                     <span class="material-symbols-outlined">add_a_photo</span>
                                 </div>
-                                <div>
+                                <div class="flex-1">
                                     <p class="text-sm font-bold text-slate-700">Upload Client Photo</p>
                                     <p class="text-[10px] text-slate-400">Supports JPG, PNG (Max 90KB)</p>
                                 </div>
+                                <img id="photoPreview"
+                                    class="hidden w-12 h-12 rounded-xl object-cover ring-2 ring-white shadow-sm">
                                 <input type="file" id="photoInput" accept="image/*"
                                     class="absolute inset-0 opacity-0 cursor-pointer">
                             </div>
@@ -743,7 +763,7 @@
         /* --- CONSTANTS & STATE --- */
         const API_KEY = 'AIzaSyAN_kshpoKprIZXZMCS-K--RTh-oNjsvGU';
         const SHEET_ID = '1f9VbQmzjyKXIdX49Aej-JEi8CLb1jx6UENVAV1BcbWc';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8jr8eY787YXZ75RzvdNZXMsLrwJ6AydWJDFBiFoj97eFA2ADyCSUBxDTy4ehxYZdt/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzxeytvUgYbHEmuvyGoIJlshniV36i44D1SWStMbHtjM4j0IZChaLFF-ShYeHweJo9Y/exec';
         const N8N_WEBHOOK = 'https://n8n.jhansiproperty.com/webhook/e875f655-c535-462b-ac03-7a0eca4bd5ea/chat';
 
         let allLeads = [];
@@ -785,9 +805,9 @@
             }
 
             if (tabId === 'leads' && allLeads.length === 0) loadLeads();
-            if (tabId === 'form') { 
+            if (tabId === 'form') {
                 resetForm();
-                initializeFormProjects(); 
+                initializeFormProjects();
             }
             if (tabId === 'home') updateHomeStats();
 
@@ -853,13 +873,13 @@
                     localStorage.setItem('userContact', match[3] || '');
                     localStorage.setItem('userRole', (match[5] || 'User').trim());
                     enterApp(match[2]);
-                } else { 
-                    alert("Invalid inputs"); 
-                    btn.innerText = "Verify PIN"; 
+                } else {
+                    alert("Invalid inputs");
+                    btn.innerText = "Verify PIN";
                 }
-            } catch (e) { 
-                alert("Login Error"); 
-                btn.innerText = "Verify PIN"; 
+            } catch (e) {
+                alert("Login Error");
+                btn.innerText = "Verify PIN";
             }
         }
 
@@ -951,13 +971,70 @@
                 if (lastLeadCount === 0) lastLeadCount = filteredLeads.length;
 
                 allLeads = [...filteredLeads].reverse();
+                renderFollowUps();
                 renderNextBatch(true);
 
                 if (currentTab === 'home') updateHomeStats();
-            } catch (e) { 
-                console.error(e); 
+            } catch (e) {
+                console.error(e);
             }
             loader.classList.add('hidden');
+        }
+
+        function renderFollowUps() {
+            const container = document.getElementById('followUpSection');
+            const scroll = document.getElementById('followUpScroll');
+            const countBadge = document.getElementById('followUpCount');
+
+            const today = new Date();
+            const todayStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+            const currentDisplayName = localStorage.getItem('displayName');
+
+            const followUps = rawLeads.filter(lead => {
+                if (!lead.FollowUpDateTime) return false;
+                // Check if date part matches today
+                const isToday = lead.FollowUpDateTime.split(' ')[0] === todayStr && lead.Status !== 'Closed';
+                if (!isToday) return false;
+
+                // Visibility Filter (Same as main list)
+                const leadProjs = (lead.Project || '').split(',').map(s => s.trim());
+                const isAssignedProject = leadProjs.some(lp => userProjects.includes(lp));
+                const isOwner = String(lead.UserName || '').toLowerCase() === currentDisplayName.toLowerCase();
+
+                return isAssignedProject || isOwner;
+            });
+
+            if (followUps.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            countBadge.innerText = followUps.length;
+
+            scroll.innerHTML = followUps.map(lead => {
+                const statusColor = getStatusColor(lead.Status);
+                const timeStr = lead.FollowUpDateTime.split(' ')[1] || '';
+                const globalIndex = allLeads.findIndex(l => l.Contact === lead.Contact && l.Name === lead.Name);
+
+                return `
+                <div onclick="${globalIndex !== -1 ? `openLeadModal(${globalIndex})` : ''}" class="flex-shrink-0 w-64 snap-start bg-white p-4 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition cursor-pointer relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-orange-50 rounded-bl-[2rem] -mr-4 -mt-4 group-hover:scale-110 transition-transform"></div>
+                    <div class="flex items-center gap-3 relative z-10">
+                        <div class="relative">
+                            <img src="${getProxiedImageUrl(lead.ClientImageUrl, lead.Name)}" class="w-10 h-10 rounded-full object-cover">
+                            <div class="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${statusColor}"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm truncate" style="color: #000000;">${lead.Name}</h4>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="material-symbols-outlined text-[10px] text-orange-500">schedule</span>
+                                <span class="text-[10px] font-black text-slate-500">${timeStr || 'Today'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         function renderNextBatch(reset = false) {
@@ -1263,7 +1340,7 @@
             const saveIcon = document.getElementById('saveIcon');
             const saveSpinner = document.getElementById('saveSpinner');
             const saveBtnText = document.getElementById('saveBtnText');
-            
+
             saveBtn.disabled = true;
             saveIcon.classList.add('hidden');
             saveSpinner.classList.remove('hidden');
@@ -1289,9 +1366,28 @@
             }
 
             try {
+                // Get the original full record from rawLeads to preserve all columns
+                const originalData = rawLeads[rawIdx];
+
                 const updateData = {
-                    action: 'update_status_followup',
+                    action: 'update',
                     rowIndex: rawIdx + 2,
+                    // Preserve existing data
+                    Timestamp: originalData.Timestamp,
+                    Name: originalData.Name,
+                    Contact: originalData.Contact,
+                    City: originalData.City,
+                    Profession: originalData.Profession,
+                    Email: originalData.Email,
+                    Budget: originalData.Budget,
+                    Project: originalData.Project,
+                    PropertyType: originalData.PropertyType,
+                    LocationPrefer: originalData.LocationPrefer,
+                    UserName: originalData.UserName,
+                    UserContact: originalData.UserContact,
+                    ClientImageUrl: originalData.ClientImageUrl,
+                    LeadSource: originalData.LeadSource,
+                    // Update only modal fields
                     Status: newStatus,
                     Note: newNote,
                     FollowUpDateTime: formattedFollowUp
@@ -1310,7 +1406,7 @@
                 saveBtnText.textContent = 'Save Changes';
                 saveBtn.disabled = false;
 
-                alert('✅ Changes saved successfully! Refreshing data...');
+
                 document.getElementById('leadModal').classList.add('hidden');
                 loadLeads();
             } catch (e) {
@@ -1320,14 +1416,13 @@
                 saveBtnText.textContent = 'Save Changes';
                 saveBtn.disabled = false;
 
-                alert('✅ Changes saved successfully! Refreshing data...');
-                document.getElementById('leadModal').classList.add('hidden');
-                loadLeads();
+                console.error('Popup save error:', e);
+                alert('❌ Error saving changes: ' + e.message);
             }
         }
 
-        function closeOnBackdrop(e) { 
-            if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden'); 
+        function closeOnBackdrop(e) {
+            if (e.target.id === 'leadModal') document.getElementById('leadModal').classList.add('hidden');
         }
 
         /* --- FORM & EDIT LOGIC --- */
@@ -1363,16 +1458,23 @@
             document.getElementById('saveBtn').innerHTML = '<span class="material-symbols-outlined">save</span> Save Record';
             document.getElementById('statusMsg').textContent = '';
             photoData = null;
-            
+
+            // Clear photo preview
+            const preview = document.getElementById('photoPreview');
+            if (preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
+
             // Reset default values
             document.getElementById('City').value = 'Jhansi';
             document.getElementById('Profession').value = 'Business';
             document.getElementById('Status').value = 'New';
             document.getElementById('PropertyType').value = 'Plots';
             document.getElementById('LeadSource').value = 'App';
-            
-            const d = new Date(); 
-            d.setDate(d.getDate() + 3); 
+
+            const d = new Date();
+            d.setDate(d.getDate() + 3);
             d.setHours(10, 0, 0, 0);
             document.getElementById('FollowUpDateTime').value = d.toISOString().slice(0, 16);
         }
@@ -1389,36 +1491,56 @@
                 } else {
                     msg.className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
                     msg.textContent = 'New number available.';
+
+                    // Reset form but keep the contact number
+                    const currentContact = document.getElementById('Contact').value;
                     resetForm();
+                    document.getElementById('Contact').value = currentContact;
+                    document.getElementById('statusMsg').textContent = 'New number available.';
+                    document.getElementById('statusMsg').className = 'text-[10px] mt-2 font-bold italic text-emerald-500';
                 }
             }
         }
 
-        function populateEditForm(listIndex) {
+        async function populateEditForm(listIndex) {
             const lead = allLeads[listIndex];
             const rawIdx = rawLeads.findIndex(r => r.Contact === lead.Contact && r.Name === lead.Name);
             if (rawIdx === -1) return alert("Error locating record");
 
             document.getElementById('leadModal').classList.add('hidden');
             switchTab('form');
+
+            // Ensure projects are loaded before populating
+            await initializeFormProjects();
+
             populateEditFormRes(lead, rawIdx + 2);
         }
 
         function populateEditFormRes(data, rowIdx) {
             document.getElementById('rowIndex').value = rowIdx;
-            document.getElementById('existingImg').value = data.ClientImageUrl || '';
+            const imgUrl = data.ClientImageUrl || '';
+            document.getElementById('existingImg').value = imgUrl;
+
+            // Show current image preview
+            const preview = document.getElementById('photoPreview');
+            if (preview && imgUrl) {
+                preview.src = getProxiedImageUrl(imgUrl, data.Name);
+                preview.classList.remove('hidden');
+            } else if (preview) {
+                preview.classList.add('hidden');
+            }
 
             document.getElementById('Name').value = data.Name || '';
             let contact = data.Contact || '';
             if (contact.startsWith('91') && contact.length === 12) contact = contact.substring(2);
             document.getElementById('Contact').value = contact;
             document.getElementById('City').value = data.City || 'Jhansi';
-            
+
             // Handle Profession with "Other" support
             const professionSelect = document.getElementById('Profession');
             const profOtherInput = document.getElementById('profOther');
             const standardProfessions = ['Business', 'Govt. Employee', 'Doctor', 'Engineer'];
-            
+
             if (standardProfessions.includes(data.Profession)) {
                 professionSelect.value = data.Profession;
                 profOtherInput.classList.add('hidden');
@@ -1433,12 +1555,12 @@
             document.getElementById('Status').value = data.Status || 'New';
             document.getElementById('Note').value = data.Note || '';
             document.getElementById('Budget').value = data.Budget || '';
-            
+
             // Handle Property Type with "Other" support
             const propertyTypeSelect = document.getElementById('PropertyType');
             const propTypeOtherInput = document.getElementById('propTypeOther');
             const standardPropertyTypes = ['Plots', 'Villa', 'House', 'Land'];
-            
+
             if (standardPropertyTypes.includes(data.PropertyType)) {
                 propertyTypeSelect.value = data.PropertyType;
                 propTypeOtherInput.classList.add('hidden');
@@ -1480,7 +1602,7 @@
             try {
                 const formData = new FormData(e.target);
                 const obj = Object.fromEntries(formData);
-                
+
                 // Handle phone number
                 if (obj.Contact.length === 10) obj.Contact = '91' + obj.Contact;
 
@@ -1530,8 +1652,8 @@
                 });
 
                 photoData = null;
-                
-                alert("Saved Successfully");
+
+
                 location.reload();
             } catch (e) {
                 alert("Saved (CORS mode) or Error: " + e.message);
@@ -1543,19 +1665,19 @@
         document.getElementById('photoInput').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            
+
             if (file.size > 5 * 1024 * 1024) {
                 alert("⚠️ File too large. Please select an image under 5MB.");
                 e.target.value = '';
                 return;
             }
-            
+
             if (!file.type.startsWith('image/')) {
                 alert("⚠️ Please select a valid image file (JPG, PNG, etc.)");
                 e.target.value = '';
                 return;
             }
-            
+
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const img = new Image();
@@ -1563,11 +1685,11 @@
                     try {
                         const canvas = document.getElementById('compressor');
                         const ctx = canvas.getContext('2d');
-                        
+
                         const maxSize = 300;
                         let width = img.width;
                         let height = img.height;
-                        
+
                         if (width > height) {
                             if (width > maxSize) {
                                 height *= maxSize / width;
@@ -1579,20 +1701,28 @@
                                 height = maxSize;
                             }
                         }
-                        
+
                         canvas.width = width;
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        
+
                         photoData = canvas.toDataURL('image/jpeg', 0.5);
-                        
+
+                        // Show preview
+                        const preview = document.getElementById('photoPreview');
+                        if (preview) {
+                            preview.src = photoData;
+                            preview.classList.remove('hidden');
+                        }
+
                         const sizeKB = Math.round((photoData.length * 3) / 4 / 1024);
                         if (sizeKB > 90) {
                             alert(`⚠️ Compressed image is still too large (${sizeKB}KB). Try a smaller image.`);
                             photoData = null;
                             e.target.value = '';
+                            if (preview) preview.classList.add('hidden');
                         } else {
-                            alert(`✅ Photo processed! Size: ${sizeKB}KB`);
+
                         }
                     } catch (error) {
                         console.error('Image processing error:', error);
@@ -1618,12 +1748,12 @@
             if (confirm("Delete this record?")) {
                 const idx = document.getElementById('rowIndex').value;
                 const pin = prompt("Enter PIN to confirm delete");
-                fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin }) 
-                }).then(() => { 
-                    alert("Deleted"); 
-                    location.reload(); 
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'delete', rowIndex: idx, pin: pin })
+                }).then(() => {
+                    alert("Deleted");
+                    location.reload();
                 });
             }
         }
@@ -1734,10 +1864,10 @@
                         borderWidth: 0
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } } 
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
                 }
             });
 
