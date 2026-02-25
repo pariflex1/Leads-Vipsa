@@ -1,31 +1,22 @@
 {
-  "name": "Lead Pro Dashboard",
-  "short_name": "Lead Pro",
-  "description": "Professional Lead Management System",
+  "name": "Jhansi Property Leads",
+  "short_name": "JP Leads",
+  "description": "Lead management tool for Jhansi Property",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "categories": ["business", "productivity"],
-  "screenshots": [
-    {
-      "src": "screenshot.png",
-      "sizes": "540x720",
       "type": "image/png"
     }
   ]
